@@ -7,16 +7,12 @@ import { Form } from 'antd';
 import { memo, useEffect, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 
-interface RenderProps {
-  selectedId: string;
-}
-
 interface RenderForm {
   globalRenderType: 'svg' | 'canvas';
   componentRenderType: 'svg' | 'canvas' | 'inherit';
 }
 
-const Render: FC<RenderProps> = memo(({ selectedId }) => {
+const Render: FC = memo(() => {
   const [form] = Form.useForm<RenderForm>();
   const { echartsRenderer, setEchartsRenderer } = useGlobalStore(
     useShallow((state) => ({
@@ -24,9 +20,9 @@ const Render: FC<RenderProps> = memo(({ selectedId }) => {
       setEchartsRenderer: state.setEchartsRenderer,
     })),
   );
-  const { updateComponentById } = useCanvasStore(
+  const { selectedId, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      componentMap: state.componentMap,
+      selectedId: state.selectedId,
       updateComponentById: state.updateComponentById,
     })),
   );
@@ -38,7 +34,7 @@ const Render: FC<RenderProps> = memo(({ selectedId }) => {
       setEchartsRenderer(changedFields.globalRenderType);
     }
     if (changedFields.componentRenderType) {
-      updateComponentById(selectedId, { renderer: changedFields.componentRenderType });
+      updateComponentById(selectedId!, { renderer: changedFields.componentRenderType });
     }
   });
 

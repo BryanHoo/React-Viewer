@@ -9,6 +9,10 @@ export interface MaterielItem {
   panel?: string;
   renderer?: 'svg' | 'canvas' | 'inherit';
   option?: EChartsOption;
+  paddingTop?: string;
+  paddingBottom?: string;
+  paddingLeft?: string;
+  paddingRight?: string;
 }
 
 export interface MaterielCanvasItem extends MaterielItem {

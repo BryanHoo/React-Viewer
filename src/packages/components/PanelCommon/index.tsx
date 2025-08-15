@@ -118,9 +118,6 @@ const PanelCommon: FC<PanelProps> = memo(({ selectedId }) => {
           </Form.Item>
         </div>
       </Form.Item>
-      <Form.Item label="对齐方式">
-        <SettingAlign onChange={handleAlignChange} disabled={!selectedItem} />
-      </Form.Item>
       <Form.Item label="位置">
         <div className="flex items-center justify-between gap-2 w-full">
           <Form.Item name="top" noStyle>
@@ -130,6 +127,9 @@ const PanelCommon: FC<PanelProps> = memo(({ selectedId }) => {
             <InputNumber className="w-full" prefix="左" addonAfter="px" />
           </Form.Item>
         </div>
+      </Form.Item>
+      <Form.Item label="对齐方式">
+        <SettingAlign onChange={handleAlignChange} disabled={!selectedItem} />
       </Form.Item>
     </Form>
   );

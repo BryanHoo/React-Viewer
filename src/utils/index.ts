@@ -10,5 +10,14 @@ export function generateId(prefix: string = '', size: number = 21): string {
   return prefix + nanoid(size);
 }
 
+export const toCss = (value?: number, unit: 'px' | '%' = 'px') => {
+  return typeof value === 'number' && !Number.isNaN(value) ? `${value}${unit}` : undefined;
+};
+
+export const normalize = (val?: number | null) => {
+  if (val === null || typeof val !== 'number' || Number.isNaN(val)) return undefined;
+  return val < 0 ? 0 : val;
+};
+
 export type { Rect, RectPartial, CanvasBounds, MinSizeConstraints } from './rect';
 export { computeNextRectWithinCanvas, DEFAULT_MIN_SIZE, clampRectToCanvas } from './rect';

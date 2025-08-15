@@ -1,3 +1,4 @@
+import Container from '@/packages/components/Container';
 import PanelCommon from '@/packages/components/PanelCommon';
 import Render from '@/packages/components/Render';
 import type { PanelProps } from '@/types/materielType';
@@ -14,12 +15,12 @@ const BaseBarOnePanel: FC<PanelProps> = memo(({ selectedId }) => {
     {
       key: '1',
       label: '渲染器',
-      children: <Render selectedId={selectedId} />,
+      children: <Render />,
     },
     {
       key: '2',
-      label: 'This is panel header 2',
-      children: <p>{text}</p>,
+      label: '容器',
+      children: <Container />,
     },
     {
       key: '3',
@@ -30,7 +31,7 @@ const BaseBarOnePanel: FC<PanelProps> = memo(({ selectedId }) => {
   return (
     <div className="w-full h-full">
       <PanelCommon selectedId={selectedId} />
-      <Collapse items={items} defaultActiveKey={['1']} bordered={false} />
+      <Collapse items={items} bordered={false} />
     </div>
   );
 });

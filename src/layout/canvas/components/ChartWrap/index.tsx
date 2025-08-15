@@ -12,7 +12,21 @@ interface ChartWrapProps extends MaterielCanvasItem {
 }
 
 const ChartWrap: FC<ChartWrapProps> = memo((props) => {
-  const { top, left, className, style, componentName, id, title, width, height } = props;
+  const {
+    top,
+    left,
+    className,
+    style,
+    componentName,
+    id,
+    title,
+    width,
+    height,
+    paddingTop,
+    paddingRight,
+    paddingBottom,
+    paddingLeft,
+  } = props;
   const Component = packages.components[componentName];
   const setSelectedId = useCanvasStore(useShallow((state) => state.setSelectedId));
 
@@ -24,7 +38,18 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
   return (
     <div
       className={classNames('absolute', className)}
-      style={{ top, left, width, height, ...style }}
+      style={{
+        top,
+        left,
+        width,
+        height,
+        paddingTop,
+        paddingRight,
+        paddingBottom,
+        paddingLeft,
+        boxSizing: 'border-box',
+        ...style,
+      }}
       data-id={id}
       data-title={title}
       key={id}
