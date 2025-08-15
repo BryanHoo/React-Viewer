@@ -3,10 +3,11 @@ import { useCanvasStore } from '@/store/canvasStore';
 import type { PanelProps } from '@/types/materielType';
 import { useDebounceFn } from 'ahooks';
 import { Form, Input, InputNumber } from 'antd';
-import { memo, useEffect, useMemo, type FC } from 'react';
+import { memo, useEffect, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
 import { useMemoizedFn } from 'ahooks';
+import useComponent from '@/hooks/useComponent';
 
 interface PanelFormValues {
   title?: string;
@@ -18,14 +19,14 @@ interface PanelFormValues {
 
 const PanelCommon: FC<PanelProps> = memo(({ selectedId }) => {
   const [form] = Form.useForm<PanelFormValues>();
-  const { componentList, updateComponentRectById, updateComponentById } = useCanvasStore(
+  const { updateComponentRectById, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      componentList: state.componentList,
+      componentMap: state.componentMap,
       updateComponentRectById: state.updateComponentRectById,
       updateComponentById: state.updateComponentById,
     })),
   );
-  const selectedItem = useMemo(() => componentList.get(selectedId), [componentList, selectedId]);
+  const { config: selectedItem } = useComponent({ id: selectedId });
 
   const { width: canvasWidth, height: canvasHeight } = useGlobalStore(
     useShallow((state) => ({ width: state.width, height: state.height })),

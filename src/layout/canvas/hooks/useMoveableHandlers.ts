@@ -4,7 +4,7 @@ import type { OnDrag, OnDragEnd, OnResize, OnResizeEnd } from 'react-moveable';
 
 interface UseMoveableHandlersParams {
   canvasRef: React.RefObject<HTMLDivElement>;
-  selectedId: string | null;
+  selectedId?: string;
   canvasWidth: number;
   canvasHeight: number;
   unit: number; // kept for future extensibility; not used directly now

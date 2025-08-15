@@ -4,17 +4,17 @@ import { memo, useMemo, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 const Customize: FC = memo(() => {
-  const { selectedId, componentList } = useCanvasStore(
+  const { selectedId, componentMap } = useCanvasStore(
     useShallow((state) => ({
       selectedId: state.selectedId,
-      componentList: state.componentList,
+      componentMap: state.componentMap,
     })),
   );
   const PanelComponent = useMemo(() => {
-    const config = selectedId ? componentList.get(selectedId) : undefined;
+    const config = selectedId ? componentMap.get(selectedId) : undefined;
     if (!config?.panel) return null;
     return packages.panels[config.panel];
-  }, [selectedId, componentList]);
+  }, [selectedId, componentMap]);
 
   return (
     <div className="w-full h-full">

@@ -2,9 +2,9 @@ import ECharts from '@/components/ECharts';
 import type { EChartsOption } from 'echarts';
 import { memo, useMemo, type FC } from 'react';
 import { mergeOption } from '@/utils/chart';
-import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
+import useComponent from '@/hooks/useComponent';
 
 interface BarCommonProps {
   id: string;
@@ -18,13 +18,8 @@ const BaseECharts: FC<BarCommonProps> = memo((props) => {
       echartsRenderer: state.echartsRenderer,
     })),
   );
-  const { componentList } = useCanvasStore(
-    useShallow((state) => ({
-      componentList: state.componentList,
-    })),
-  );
 
-  const config = useMemo(() => componentList.get(id), [componentList, id]);
+  const { config } = useComponent({ id });
 
   const mergedOption = useMemo(
     () => mergeOption({ ...defaultOption, ...config?.option }) as EChartsOption,

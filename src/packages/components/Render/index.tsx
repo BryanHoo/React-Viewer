@@ -1,9 +1,10 @@
 import CustomSegmented from '@/components/CustomSegmented';
+import useComponent from '@/hooks/useComponent';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useGlobalStore } from '@/store/globalStore';
 import { useMemoizedFn } from 'ahooks';
 import { Form } from 'antd';
-import { memo, useEffect, useMemo, type FC } from 'react';
+import { memo, useEffect, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 interface RenderProps {
@@ -23,14 +24,14 @@ const Render: FC<RenderProps> = memo(({ selectedId }) => {
       setEchartsRenderer: state.setEchartsRenderer,
     })),
   );
-  const { componentList, updateComponentById } = useCanvasStore(
+  const { updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      componentList: state.componentList,
+      componentMap: state.componentMap,
       updateComponentById: state.updateComponentById,
     })),
   );
 
-  const config = useMemo(() => componentList.get(selectedId), [componentList, selectedId]);
+  const { config } = useComponent({ id: selectedId });
 
   const handleValuesChange = useMemoizedFn((changedFields: RenderForm) => {
     if (changedFields.globalRenderType) {

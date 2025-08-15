@@ -15,6 +15,7 @@ import useMoveableHandlers from './hooks/useMoveableHandlers';
 import type { MaterielItem } from '@/types/materielType';
 import { clampRectToCanvas, isMaterielItem } from '@/utils/rect';
 import type { Rect, CanvasBounds } from '@/utils/rect';
+import useComponent from '@/hooks/useComponent';
 
 const Canvas: React.FC = memo(() => {
   const { width, height, scale, setScale, isDragging } = useGlobalStore(
@@ -26,20 +27,18 @@ const Canvas: React.FC = memo(() => {
       isDragging: state.isDragging,
     })),
   );
-  const { componentList, addComponent, selectedId, setSelectedId, updateComponentRectById } =
+  const { componentMap, addComponent, selectedId, setSelectedId, updateComponentRectById } =
     useCanvasStore(
       useShallow((state) => ({
-        componentList: state.componentList,
+        componentMap: state.componentMap,
         addComponent: state.addComponent,
         selectedId: state.selectedId,
         setSelectedId: state.setSelectedId,
         updateComponentRectById: state.updateComponentRectById,
       })),
     );
-  const selectedItem = useMemo(
-    () => (selectedId ? componentList.get(selectedId) || null : null),
-    [componentList, selectedId],
-  );
+  const { config: selectedItem } = useComponent({ id: selectedId });
+  const componentList = useMemo(() => Array.from(componentMap.values()), [componentMap]);
   const zoom = useMemo(() => scale / 100, [scale]);
   const unit = useMemo(() => Math.round(50 / zoom), [zoom]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -140,7 +139,7 @@ const Canvas: React.FC = memo(() => {
     const target = e.target as HTMLElement;
     // 点击 Moveable 控件不取消选中
     if (target.closest('.moveable') || target.closest('.moveable-control')) return;
-    setSelectedId(null);
+    setSelectedId(undefined);
   });
 
   return (
@@ -206,7 +205,7 @@ const Canvas: React.FC = memo(() => {
           onDragOver={handleDragOver}
           onMouseDown={handleCanvasMouseDown}
         >
-          {Array.from(componentList.values()).map((item) => (
+          {componentList.map((item) => (
             <ChartWrap {...item} key={item.id} />
           ))}
 
