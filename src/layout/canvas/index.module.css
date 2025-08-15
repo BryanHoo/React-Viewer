@@ -1,0 +1,51 @@
+.dot-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: transparent;
+  background-image: radial-gradient(circle, #a0a0a0 1px, transparent 1px);
+  background-size: 16px 16px;
+  opacity: 0.5;
+}
+
+/* Moveable 主题：主色来自全局变量，控制点白色填充 + 主色描边，边框主色 */
+.moveableTheme {
+  /* 使用项目主色驱动 moveable 的默认颜色变量 */
+  --moveable-color: var(--n-primary-color) !important;
+}
+
+/* 选框连线（实线）使用主色 */
+.moveableTheme :global(.moveable-line) {
+  background: var(--moveable-color) !important;
+}
+
+/* 虚线选框继承主色 */
+.moveableTheme :global(.moveable-line.moveable-dashed) {
+  background: transparent !important;
+}
+.moveableTheme :global(.moveable-line.moveable-dashed.moveable-horizontal) {
+  border-top-color: var(--moveable-color) !important;
+}
+.moveableTheme :global(.moveable-line.moveable-dashed.moveable-vertical) {
+  border-left-color: var(--moveable-color) !important;
+}
+
+/* 控制点：白色内部 + 主色描边 */
+.moveableTheme :global(.moveable-control) {
+  background: #ffffff !important;
+  border: 2px solid var(--moveable-color) !important;
+}
+
+/* 旋转控制点与连线同样使用主色描边，内部白色 */
+.moveableTheme :global(.moveable-line.moveable-rotation-line .moveable-control) {
+  border-color: var(--moveable-color) !important;
+  background: #ffffff !important;
+}
+
+/* 变换原点点样式（可见时）与主题一致 */
+.moveableTheme :global(.moveable-control.moveable-origin) {
+  border-color: var(--moveable-color) !important;
+  background: #ffffff !important;
+}
