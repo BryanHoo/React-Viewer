@@ -1,3 +1,5 @@
+import type { EChartsOption } from 'echarts-for-react';
+import type { ComponentType } from 'react';
 export interface MaterielItem {
   id: string;
   title: string;
@@ -5,6 +7,8 @@ export interface MaterielItem {
   type: string;
   componentName: string;
   panel?: string;
+  renderer?: 'svg' | 'canvas' | 'inherit';
+  option?: EChartsOption;
 }
 
 export interface MaterielCanvasItem extends MaterielItem {
@@ -17,6 +21,10 @@ export interface MaterielCanvasItem extends MaterielItem {
 
 export interface PackageConfig {
   config: MaterielItem[];
-  components: Record<string, any>;
-  panels: Record<string, any>;
+  components: Record<string, ComponentType<any>>;
+  panels: Record<string, ComponentType<PanelProps>>;
+}
+
+export interface PanelProps {
+  selectedId: string;
 }

@@ -16,7 +16,13 @@ const Category: FC<CategoryProps> = memo(({ activeCategory, setActiveCategory })
     })),
   );
   const categoryList = useMemo(() => {
-    return menuConfig[activeMenu].items.map((item) => item.type);
+    const items = menuConfig[activeMenu].items;
+    const list: string[] = [];
+    items.forEach((item) => {
+      if (list.includes(item.type)) return;
+      list.push(item.type);
+    });
+    return list;
   }, [activeMenu]);
 
   return (

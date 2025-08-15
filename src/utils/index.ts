@@ -9,3 +9,6 @@ import { nanoid } from 'nanoid';
 export function generateId(prefix: string = '', size: number = 21): string {
   return prefix + nanoid(size);
 }
+
+export type { Rect, RectPartial, CanvasBounds, MinSizeConstraints } from './rect';
+export { computeNextRectWithinCanvas, DEFAULT_MIN_SIZE, clampRectToCanvas } from './rect';

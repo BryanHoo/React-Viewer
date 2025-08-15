@@ -4,12 +4,12 @@ import { defaultOption } from './config';
 import { memo, type FC } from 'react';
 
 interface BaseBarOneProps {
-  option: EChartsOption;
+  id: string;
 }
 
 const BaseBarOne: FC<BaseBarOneProps> = memo((props) => {
-  const { option } = props;
-  return <BaseECharts option={option} defaultOption={defaultOption} />;
+  const { id } = props;
+  return <BaseECharts id={id} defaultOption={defaultOption as EChartsOption} />;
 });
 
 BaseBarOne.displayName = 'BaseBarOne';

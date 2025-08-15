@@ -51,7 +51,7 @@ const GlobalPanel: FC = memo(() => {
             required={false}
             rules={[{ required: true, message: '请输入宽度' }]}
           >
-            <InputNumber style={{ width: '100%' }} min={100} max={10000} />
+            <InputNumber style={{ width: '100%' }} min={100} max={10000} addonAfter="px" />
           </Form.Item>
           <Form.Item
             label="高度"
@@ -60,7 +60,7 @@ const GlobalPanel: FC = memo(() => {
             required={false}
             rules={[{ required: true, message: '请输入高度' }]}
           >
-            <InputNumber style={{ width: '100%' }} min={100} max={10000} />
+            <InputNumber style={{ width: '100%' }} min={100} max={10000} addonAfter="px" />
           </Form.Item>
         </div>
         <div className="flex items-center gap-[15px] w-full justify-between h-[150px] mb-[15px]">

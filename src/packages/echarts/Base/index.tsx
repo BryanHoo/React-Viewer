@@ -2,21 +2,41 @@ import ECharts from '@/components/ECharts';
 import type { EChartsOption } from 'echarts';
 import { memo, useMemo, type FC } from 'react';
 import { mergeOption } from '@/utils/chart';
+import { useCanvasStore } from '@/store/canvasStore';
+import { useShallow } from 'zustand/shallow';
+import { useGlobalStore } from '@/store/globalStore';
 
 interface BarCommonProps {
-  option: EChartsOption;
+  id: string;
   defaultOption: EChartsOption;
 }
 
 const BaseECharts: FC<BarCommonProps> = memo((props) => {
-  const { option, defaultOption } = props;
-
-  const mergedOption = useMemo(
-    () => mergeOption({ ...defaultOption, ...option }) as EChartsOption,
-    [option, defaultOption],
+  const { id, defaultOption } = props;
+  const { echartsRenderer } = useGlobalStore(
+    useShallow((state) => ({
+      echartsRenderer: state.echartsRenderer,
+    })),
+  );
+  const { componentList } = useCanvasStore(
+    useShallow((state) => ({
+      componentList: state.componentList,
+    })),
   );
 
-  return <ECharts option={mergedOption} />;
+  const config = useMemo(() => componentList.find((i) => i.id === id), [componentList, id]);
+
+  const mergedOption = useMemo(
+    () => mergeOption({ ...defaultOption, ...config?.option }) as EChartsOption,
+    [config?.option, defaultOption],
+  );
+
+  const renderer = useMemo(() => {
+    if (config?.renderer && config.renderer !== 'inherit') return config.renderer;
+    return echartsRenderer;
+  }, [config?.renderer, echartsRenderer]);
+
+  return <ECharts option={mergedOption} renderer={renderer} />;
 });
 
 BaseECharts.displayName = 'BaseECharts';

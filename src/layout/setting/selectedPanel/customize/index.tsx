@@ -1,22 +1,26 @@
 import packages from '@/packages';
-import { useGlobalStore } from '@/store/globalStore';
+import { useCanvasStore } from '@/store/canvasStore';
 import { memo, useMemo, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 const Customize: FC = memo(() => {
-  const { selectedComponentId, componentList } = useGlobalStore(
+  const { selectedId, componentList } = useCanvasStore(
     useShallow((state) => ({
-      selectedComponentId: state.selectedComponentId,
+      selectedId: state.selectedId,
       componentList: state.componentList,
     })),
   );
   const PanelComponent = useMemo(() => {
-    const config = componentList.find((item) => item.id === selectedComponentId);
+    const config = componentList.find((item) => item.id === selectedId);
     if (!config?.panel) return null;
-    return packages.panels[config.panel] as FC;
-  }, [selectedComponentId, componentList]);
+    return packages.panels[config.panel];
+  }, [selectedId, componentList]);
 
-  return <div className="w-full h-full">{PanelComponent && <PanelComponent />}</div>;
+  return (
+    <div className="w-full h-full">
+      {PanelComponent && selectedId && <PanelComponent selectedId={selectedId} />}
+    </div>
+  );
 });
 
 Customize.displayName = 'Customize';

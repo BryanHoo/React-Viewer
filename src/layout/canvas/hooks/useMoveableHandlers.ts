@@ -4,7 +4,7 @@ import type { OnDrag, OnDragEnd, OnResize, OnResizeEnd } from 'react-moveable';
 
 interface UseMoveableHandlersParams {
   canvasRef: React.RefObject<HTMLDivElement>;
-  selectedComponentId: string | null;
+  selectedId: string | null;
   canvasWidth: number;
   canvasHeight: number;
   unit: number; // kept for future extensibility; not used directly now
@@ -29,7 +29,7 @@ const MIN_HEIGHT = 60;
 function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHandlersResult {
   const {
     canvasRef,
-    selectedComponentId,
+    selectedId,
     canvasWidth,
     canvasHeight,
     // unit (reserved for future usage)
@@ -55,16 +55,16 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
   );
 
   const targetElement = useMemo<HTMLElement | null>(() => {
-    if (!canvasRef.current || !selectedComponentId) return null;
+    if (!canvasRef.current || !selectedId) return null;
     const childList = Array.from(canvasRef.current.querySelectorAll<HTMLElement>('[data-id]'));
-    return childList.find((el) => el.dataset.id === selectedComponentId) || null;
-  }, [canvasRef, selectedComponentId]);
+    return childList.find((el) => el.dataset.id === selectedId) || null;
+  }, [canvasRef, selectedId]);
 
   const elementGuidelines = useMemo<HTMLElement[]>(() => {
     if (!canvasRef.current) return [];
     const nodes = Array.from(canvasRef.current.querySelectorAll<HTMLElement>('[data-id]'));
-    return nodes.filter((el) => el.dataset.id !== selectedComponentId);
-  }, [canvasRef, selectedComponentId]);
+    return nodes.filter((el) => el.dataset.id !== selectedId);
+  }, [canvasRef, selectedId]);
 
   const onDrag = useMemoizedFn((e: OnDrag) => {
     const { target, left, top } = e as unknown as {
@@ -89,8 +89,8 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
     const currentLeft = parseFloat(getComputedStyle(el).left) || 0;
     const currentTop = parseFloat(getComputedStyle(el).top) || 0;
     const clamped = clampRect({ left: currentLeft, top: currentTop, width: w, height: h });
-    if (selectedComponentId) {
-      updateComponentRectById(selectedComponentId, {
+    if (selectedId) {
+      updateComponentRectById(selectedId, {
         left: clamped.left,
         top: clamped.top,
       });
@@ -155,8 +155,8 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
     el.style.top = `${clamped.top}px`;
 
     resizeBeforeTranslateRef.current = [0, 0];
-    if (selectedComponentId) {
-      updateComponentRectById(selectedComponentId, {
+    if (selectedId) {
+      updateComponentRectById(selectedId, {
         left: clamped.left,
         top: clamped.top,
         width: clamped.width,

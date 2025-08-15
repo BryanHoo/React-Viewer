@@ -1,7 +1,7 @@
 import { memo, type FC } from 'react';
 import classNames from '@/utils/classname';
 import type { MaterielCanvasItem } from '@/types/materielType';
-import { useGlobalStore } from '@/store/globalStore';
+import { useCanvasStore } from '@/store/canvasStore';
 import packages from '@/packages';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn } from 'ahooks';
@@ -14,13 +14,11 @@ interface ChartWrapProps extends MaterielCanvasItem {
 const ChartWrap: FC<ChartWrapProps> = memo((props) => {
   const { top, left, className, style, componentName, id, title, width, height } = props;
   const Component = packages.components[componentName];
-  const setSelectedComponentId = useGlobalStore(
-    useShallow((state) => state.setSelectedComponentId),
-  );
+  const setSelectedId = useCanvasStore(useShallow((state) => state.setSelectedId));
 
   const handleSelect = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    setSelectedComponentId(id);
+    setSelectedId(id);
   });
 
   return (
@@ -32,7 +30,7 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
       key={id}
       onMouseDown={handleSelect}
     >
-      <Component />
+      <Component id={id} />
     </div>
   );
 });
