@@ -26,18 +26,18 @@ const Canvas: React.FC = memo(() => {
       isDragging: state.isDragging,
     })),
   );
-  const { componentList, setComponentList, selectedId, setSelectedId, updateComponentRectById } =
+  const { componentList, addComponent, selectedId, setSelectedId, updateComponentRectById } =
     useCanvasStore(
       useShallow((state) => ({
         componentList: state.componentList,
-        setComponentList: state.setComponentList,
+        addComponent: state.addComponent,
         selectedId: state.selectedId,
         setSelectedId: state.setSelectedId,
         updateComponentRectById: state.updateComponentRectById,
       })),
     );
   const selectedItem = useMemo(
-    () => componentList.find((item) => item.id === selectedId) || null,
+    () => (selectedId ? componentList.get(selectedId) || null : null),
     [componentList, selectedId],
   );
   const zoom = useMemo(() => scale / 100, [scale]);
@@ -89,17 +89,14 @@ const Canvas: React.FC = memo(() => {
         return;
       }
       const newId = generateId(materielConfig.id);
-      setComponentList([
-        ...componentList,
-        {
-          ...materielConfig,
-          id: newId,
-          top: clamped.top,
-          left: clamped.left,
-          width: clamped.width,
-          height: clamped.height,
-        },
-      ]);
+      addComponent({
+        ...materielConfig,
+        id: newId,
+        top: clamped.top,
+        left: clamped.left,
+        width: clamped.width,
+        height: clamped.height,
+      });
       setTimeout(() => {
         setSelectedId(newId);
       }, 0);
@@ -209,7 +206,7 @@ const Canvas: React.FC = memo(() => {
           onDragOver={handleDragOver}
           onMouseDown={handleCanvasMouseDown}
         >
-          {componentList.map((item) => (
+          {Array.from(componentList.values()).map((item) => (
             <ChartWrap {...item} key={item.id} />
           ))}
 

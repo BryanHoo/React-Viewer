@@ -25,10 +25,7 @@ const PanelCommon: FC<PanelProps> = memo(({ selectedId }) => {
       updateComponentById: state.updateComponentById,
     })),
   );
-  const selectedItem = useMemo(
-    () => componentList.find((item) => item.id === selectedId),
-    [componentList, selectedId],
-  );
+  const selectedItem = useMemo(() => componentList.get(selectedId), [componentList, selectedId]);
 
   const { width: canvasWidth, height: canvasHeight } = useGlobalStore(
     useShallow((state) => ({ width: state.width, height: state.height })),

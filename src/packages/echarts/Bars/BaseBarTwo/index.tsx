@@ -1,15 +1,14 @@
-import type { EChartsOption } from 'echarts';
 import BaseECharts from '../../Base';
 import { defaultOption } from './config';
 import { memo, type FC } from 'react';
 
 interface BaseBarTwoProps {
-  option: EChartsOption;
+  id: string;
 }
 
 const BaseBarTwo: FC<BaseBarTwoProps> = memo((props) => {
-  const { option } = props;
-  return <BaseECharts option={option} defaultOption={defaultOption} />;
+  const { id } = props;
+  return <BaseECharts id={id} defaultOption={defaultOption} />;
 });
 
 BaseBarTwo.displayName = 'BaseBarTwo';

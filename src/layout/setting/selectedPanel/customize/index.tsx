@@ -11,7 +11,7 @@ const Customize: FC = memo(() => {
     })),
   );
   const PanelComponent = useMemo(() => {
-    const config = componentList.find((item) => item.id === selectedId);
+    const config = selectedId ? componentList.get(selectedId) : undefined;
     if (!config?.panel) return null;
     return packages.panels[config.panel];
   }, [selectedId, componentList]);

@@ -24,7 +24,7 @@ const BaseECharts: FC<BarCommonProps> = memo((props) => {
     })),
   );
 
-  const config = useMemo(() => componentList.find((i) => i.id === id), [componentList, id]);
+  const config = useMemo(() => componentList.get(id), [componentList, id]);
 
   const mergedOption = useMemo(
     () => mergeOption({ ...defaultOption, ...config?.option }) as EChartsOption,

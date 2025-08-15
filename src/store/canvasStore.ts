@@ -4,12 +4,13 @@ import { useGlobalStore } from '@/store/globalStore';
 import { computeNextRectWithinCanvas } from '@/utils/rect';
 
 export interface CanvasComponentState {
-  componentList: MaterielCanvasItem[];
+  componentList: Map<string, MaterielCanvasItem>;
   selectedId: string | null;
 }
 
 export interface CanvasComponentActions {
-  setComponentList: (componentList: MaterielCanvasItem[]) => void;
+  setComponentList: (componentList: Map<string, MaterielCanvasItem>) => void;
+  addComponent: (component: MaterielCanvasItem) => void;
   setSelectedId: (id: string | null) => void;
   updateComponentRectById: (
     id: string,
@@ -19,35 +20,40 @@ export interface CanvasComponentActions {
 }
 
 export const useCanvasStore = create<CanvasComponentState & CanvasComponentActions>()((set) => ({
-  componentList: [],
+  componentList: new Map<string, MaterielCanvasItem>(),
   selectedId: null,
   setComponentList: (componentList) => set({ componentList }),
+  addComponent: (component) =>
+    set((state) => {
+      const nextMap = new Map(state.componentList);
+      nextMap.set(component.id, component);
+      return { componentList: nextMap } as Pick<CanvasComponentState, 'componentList'>;
+    }),
   setSelectedId: (id) => set({ selectedId: id }),
   updateComponentRectById: (id, next) =>
     set((state) => {
       const { width: canvasWidth, height: canvasHeight } = useGlobalStore.getState();
 
-      const updatedList: MaterielCanvasItem[] = state.componentList.map(
-        (item): MaterielCanvasItem => {
-          if (item.id !== id) return item;
+      const current = state.componentList.get(id);
+      if (!current) return {} as Pick<CanvasComponentState, 'componentList'>;
 
-          const computed = computeNextRectWithinCanvas(
-            { left: item.left, top: item.top, width: item.width, height: item.height },
-            next,
-            { width: canvasWidth, height: canvasHeight },
-          );
-
-          return { ...item, ...computed } as MaterielCanvasItem;
-        },
+      const computed = computeNextRectWithinCanvas(
+        { left: current.left, top: current.top, width: current.width, height: current.height },
+        next,
+        { width: canvasWidth, height: canvasHeight },
       );
 
-      return { componentList: updatedList } as Pick<CanvasComponentState, 'componentList'>;
+      const nextMap = new Map(state.componentList);
+      nextMap.set(id, { ...current, ...computed } as MaterielCanvasItem);
+
+      return { componentList: nextMap } as Pick<CanvasComponentState, 'componentList'>;
     }),
   updateComponentById: (id, next) =>
     set((state) => {
-      const updatedList: MaterielCanvasItem[] = state.componentList.map((item) =>
-        item.id === id ? ({ ...item, ...next } as MaterielCanvasItem) : item,
-      );
-      return { componentList: updatedList } as Pick<CanvasComponentState, 'componentList'>;
+      const current = state.componentList.get(id);
+      if (!current) return {} as Pick<CanvasComponentState, 'componentList'>;
+      const nextMap = new Map(state.componentList);
+      nextMap.set(id, { ...current, ...next } as MaterielCanvasItem);
+      return { componentList: nextMap } as Pick<CanvasComponentState, 'componentList'>;
     }),
 }));

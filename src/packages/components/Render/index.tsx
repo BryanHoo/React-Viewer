@@ -30,10 +30,7 @@ const Render: FC<RenderProps> = memo(({ selectedId }) => {
     })),
   );
 
-  const config = useMemo(
-    () => componentList.find((i) => i.id === selectedId),
-    [componentList, selectedId],
-  );
+  const config = useMemo(() => componentList.get(selectedId), [componentList, selectedId]);
 
   const handleValuesChange = useMemoizedFn((changedFields: RenderForm) => {
     if (changedFields.globalRenderType) {
