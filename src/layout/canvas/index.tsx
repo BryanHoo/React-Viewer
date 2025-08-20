@@ -88,6 +88,7 @@ const Canvas: React.FC = memo(() => {
         return;
       }
       const newId = generateId(materielConfig.id);
+      console.log('🚀 ~ materielConfig:', materielConfig);
       addComponent({
         ...materielConfig,
         id: newId,

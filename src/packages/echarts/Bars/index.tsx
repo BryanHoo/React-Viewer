@@ -4,6 +4,8 @@ import baseBarOneImage from '@/assets/images/chart/charts/bar/BaseBarOne-view.pn
 import baseBarTwoImage from '@/assets/images/chart/charts/bar/BaseBarTwo-view.png';
 import BaseBarTwo from './BaseBarTwo';
 import BaseBarOnePanel from './BaseBarOne/panel';
+import { defaultOption as baseBarOneDefaultOption } from './BaseBarOne/config';
+import { defaultOption as baseBarTwoDefaultOption } from './BaseBarTwo/config';
 
 export const barComponents = { BaseBarOne, BaseBarTwo };
 export const barPanels = { BaseBarOnePanel };
@@ -16,6 +18,7 @@ const bars: MaterielItem[] = [
     type: '柱状图',
     componentName: 'BaseBarOne',
     panel: 'BaseBarOnePanel',
+    option: baseBarOneDefaultOption,
   },
   {
     id: 'BaseBarTwo',
@@ -23,6 +26,7 @@ const bars: MaterielItem[] = [
     image: baseBarTwoImage,
     type: '柱状图',
     componentName: 'BaseBarTwo',
+    option: baseBarTwoDefaultOption,
   },
 ];
 

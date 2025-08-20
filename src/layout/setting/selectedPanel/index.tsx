@@ -17,7 +17,7 @@ const SelectedPanel: FC = memo(() => {
         value={activeTab}
         onChange={setActiveTab}
       />
-      <div className="flex-1 overflow-auto">{activeTab === '定制' && <Customize />}</div>
+      <div className="flex-1 overflow-auto h-0">{activeTab === '定制' && <Customize />}</div>
     </div>
   );
 });

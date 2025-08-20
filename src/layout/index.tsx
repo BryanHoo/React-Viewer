@@ -8,7 +8,7 @@ const App = memo(() => {
   return (
     <div className="w-full h-full flex flex-col">
       <Header />
-      <div className="flex-1 flex">
+      <div className="flex-1 flex h-0">
         <Materiel />
         <Canvas />
         <Setting />

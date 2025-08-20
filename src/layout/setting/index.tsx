@@ -15,7 +15,7 @@ const Config: FC = memo(() => {
   const selectedId = useCanvasStore((state) => state.selectedId);
   return (
     <div
-      className={`h-full bg-[var(--n-color)] text-[var(--n-text-color)] p-[10px] transition-all duration-500 ${showDetail ? 'w-[350px] opacity-100' : 'w-0 opacity-0'}`}
+      className={`h-full bg-[var(--n-color)] text-[var(--n-text-color)] p-[10px] overflow-hidden transition-all duration-500 ${showDetail ? 'w-[350px] opacity-100' : 'w-0 opacity-0'}`}
     >
       {selectedId ? <SelectedPanel /> : <GlobalPanel />}
     </div>

@@ -1,9 +1,9 @@
 import { forwardRef, memo, useImperativeHandle, useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
-import type { EChartsOption } from 'echarts';
 import type { EChartsRef } from './types.ts';
 import { type ChartColorsNameType, type EchartsRenderer } from './chartThemes';
 import { mergeWithGlobalTheme, resolveThemeName } from './utils';
+import type { EChartsOption } from 'echarts';
 
 interface BaseEChartsProps {
   option: EChartsOption;

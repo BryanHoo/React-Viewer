@@ -1,5 +1,4 @@
 import BaseECharts from '../../Base';
-import { defaultOption } from './config';
 import { memo, type FC } from 'react';
 
 interface BaseBarTwoProps {
@@ -8,7 +7,7 @@ interface BaseBarTwoProps {
 
 const BaseBarTwo: FC<BaseBarTwoProps> = memo((props) => {
   const { id } = props;
-  return <BaseECharts id={id} defaultOption={defaultOption} />;
+  return <BaseECharts id={id} />;
 });
 
 BaseBarTwo.displayName = 'BaseBarTwo';

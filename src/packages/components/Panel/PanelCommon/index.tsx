@@ -1,6 +1,5 @@
 import SettingAlign, { type AlignDirection } from '@/components/SettingAlign';
 import { useCanvasStore } from '@/store/canvasStore';
-import type { PanelProps } from '@/types/materielType';
 import { useDebounceFn } from 'ahooks';
 import { Form, Input, InputNumber } from 'antd';
 import { memo, useEffect, type FC } from 'react';
@@ -8,6 +7,7 @@ import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
 import { useMemoizedFn } from 'ahooks';
 import useComponent from '@/hooks/useComponent';
+import FormRow from '@/components/FormRow';
 
 interface PanelFormValues {
   title?: string;
@@ -17,10 +17,11 @@ interface PanelFormValues {
   left?: number;
 }
 
-const PanelCommon: FC<PanelProps> = memo(({ selectedId }) => {
+const PanelCommon: FC = memo(() => {
   const [form] = Form.useForm<PanelFormValues>();
-  const { updateComponentRectById, updateComponentById } = useCanvasStore(
+  const { selectedId, updateComponentRectById, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
+      selectedId: state.selectedId,
       componentMap: state.componentMap,
       updateComponentRectById: state.updateComponentRectById,
       updateComponentById: state.updateComponentById,
@@ -109,24 +110,24 @@ const PanelCommon: FC<PanelProps> = memo(({ selectedId }) => {
         <Input />
       </Form.Item>
       <Form.Item label="尺寸">
-        <div className="flex items-center justify-between gap-2 w-full">
+        <FormRow>
           <Form.Item name="width" noStyle>
             <InputNumber className="w-full" prefix="宽度" addonAfter="px" />
           </Form.Item>
           <Form.Item name="height" noStyle>
             <InputNumber className="w-full" prefix="高度" addonAfter="px" />
           </Form.Item>
-        </div>
+        </FormRow>
       </Form.Item>
       <Form.Item label="位置">
-        <div className="flex items-center justify-between gap-2 w-full">
+        <FormRow>
           <Form.Item name="top" noStyle>
             <InputNumber className="w-full" prefix="上" addonAfter="px" />
           </Form.Item>
           <Form.Item name="left" noStyle>
             <InputNumber className="w-full" prefix="左" addonAfter="px" />
           </Form.Item>
-        </div>
+        </FormRow>
       </Form.Item>
       <Form.Item label="对齐方式">
         <SettingAlign onChange={handleAlignChange} disabled={!selectedItem} />

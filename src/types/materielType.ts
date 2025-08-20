@@ -1,4 +1,4 @@
-import type { EChartsOption } from 'echarts-for-react';
+import type { EChartsOption } from 'echarts';
 import type { ComponentType } from 'react';
 export interface MaterielItem {
   id: string;
@@ -26,9 +26,7 @@ export interface MaterielCanvasItem extends MaterielItem {
 export interface PackageConfig {
   config: MaterielItem[];
   components: Record<string, ComponentType<any>>;
-  panels: Record<string, ComponentType<PanelProps>>;
+  panels: Record<string, ComponentType>;
 }
 
-export interface PanelProps {
-  selectedId: string;
-}
+export type OptionKey = 'xAxis' | 'yAxis' | 'legend';
