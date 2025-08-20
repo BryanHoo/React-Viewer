@@ -1,28 +1,28 @@
-import useComponent from '@/hooks/useComponent';
 import type { EChartsOption } from 'echarts';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useMemoizedFn } from 'ahooks';
 import { ColorPicker, Form, InputNumber, Select } from 'antd';
 import { memo, useEffect, useState, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { inferUnitFromValue, toEchartsLength, normalizeColor, type CssUnit } from '@/utils';
+import { inferUnitFromValue, toEchartsLength, type CssUnit } from '@/utils';
 import type { LegendOption } from 'echarts/types/src/component/legend/LegendModel.js';
 import FormRow from '@/components/FormRow';
+import type { PanelProps } from '@/types/materielType';
+import { getHexColorFromEvent } from '@/utils/chart';
 
-const Legend: FC = memo(() => {
+const Legend: FC<PanelProps> = memo((props) => {
+  const { config, id } = props;
   const [form] = Form.useForm<LegendOption>();
   const [unitMap, setUnitMap] = useState<Record<'width' | 'height', CssUnit>>({
     width: 'px',
     height: 'px',
   });
 
-  const { selectedId, updateComponentById } = useCanvasStore(
+  const { updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      selectedId: state.selectedId,
       updateComponentById: state.updateComponentById,
     })),
   );
-  const { config } = useComponent({ id: selectedId });
 
   useEffect(() => {
     const legend = config?.option?.legend as LegendOption | undefined;
@@ -52,7 +52,7 @@ const Legend: FC = memo(() => {
   }, [config?.option?.legend, form]);
 
   const writeLegendToStore = useMemoizedFn((allValues: LegendOption) => {
-    if (!selectedId) return;
+    if (!id) return;
     const legendNext: LegendOption = {};
 
     // width / height
@@ -66,7 +66,8 @@ const Legend: FC = memo(() => {
     if (allValues.icon) legendNext.icon = allValues.icon;
 
     // textStyle
-    const colorString = normalizeColor(allValues.textStyle?.color);
+    const colorString =
+      typeof allValues.textStyle?.color === 'string' ? allValues.textStyle?.color : undefined;
     const fontSizeRaw = allValues.textStyle?.fontSize;
     legendNext.textStyle = {
       ...(colorString ? { color: colorString } : {}),
@@ -83,7 +84,7 @@ const Legend: FC = memo(() => {
       textStyle: { ...currentLegendTextStyle, ...(legendNext.textStyle ?? {}) },
     } as Record<string, unknown>;
 
-    updateComponentById(selectedId, {
+    updateComponentById(id, {
       option: { ...currentOption, legend: mergedLegend } as EChartsOption,
     });
   });
@@ -126,8 +127,12 @@ const Legend: FC = memo(() => {
         </Form.Item>
       </FormRow>
       <FormRow>
-        <Form.Item name={['textStyle', 'color']} label="颜色">
-          <ColorPicker allowClear showText style={{ width: '100%' }} />
+        <Form.Item
+          name={['textStyle', 'color']}
+          label="颜色"
+          getValueFromEvent={getHexColorFromEvent}
+        >
+          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item name={['textStyle', 'fontSize']} label="大小">
           <InputNumber min={1} style={{ width: '100%' }} />

@@ -48,3 +48,5 @@ export const updateOptionShowFlag = (
   }
   return { ...prev, [key]: nextValue };
 };
+
+export const getHexColorFromEvent = (_: any, hex?: string) => hex;

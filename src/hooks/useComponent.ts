@@ -12,7 +12,7 @@ const useComponent = (props: UseComponentProps) => {
     useShallow((state) => ({ componentMap: state.componentMap })),
   );
 
-  const config = useMemo(() => (id ? componentMap.get(id) : null), [componentMap, id]);
+  const config = useMemo(() => (id ? componentMap.get(id) : undefined), [componentMap, id]);
 
   return { config };
 };

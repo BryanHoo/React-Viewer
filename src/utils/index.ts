@@ -39,25 +39,5 @@ export const toEchartsLength = (
   return unit === 'px' ? Math.round(value) : `${value}%`;
 };
 
-/**
- * 颜色归一化：支持字符串与 antd ColorPicker 对象（toHexString）
- */
-export const normalizeColor = (value: unknown): string | undefined => {
-  if (typeof value === 'string') return value;
-  if (
-    value &&
-    typeof value === 'object' &&
-    'toHexString' in (value as Record<string, unknown>) &&
-    typeof (value as { toHexString?: unknown }).toHexString === 'function'
-  ) {
-    try {
-      return (value as { toHexString: () => string }).toHexString();
-    } catch {
-      return undefined;
-    }
-  }
-  return undefined;
-};
-
 export type { Rect, RectPartial, CanvasBounds, MinSizeConstraints } from './rect';
 export { computeNextRectWithinCanvas, DEFAULT_MIN_SIZE, clampRectToCanvas } from './rect';

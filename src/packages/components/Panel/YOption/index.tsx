@@ -6,25 +6,31 @@ import FormRow from '@/components/FormRow';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { merge } from 'lodash-es';
-import { normalizeColor } from '@/utils';
+import type { MaterielCanvasItem } from '@/types/materielType';
+import { getHexColorFromEvent } from '@/utils/chart';
 
-const YOption: FC = memo(() => {
+interface YOptionProps {
+  config?: MaterielCanvasItem;
+  id: string;
+}
+
+const YOption: FC<YOptionProps> = memo((props) => {
+  const { id } = props;
   const [form] = Form.useForm<YAXisOption>();
-  const { selectedId, componentMap, updateComponentById } = useCanvasStore(
+  const { componentMap, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      selectedId: state.selectedId,
       componentMap: state.componentMap,
       updateComponentById: state.updateComponentById,
     })),
   );
 
   const currentYAxis = useMemo(() => {
-    if (!selectedId) return undefined;
-    const cfg = componentMap.get(selectedId);
+    if (!id) return undefined;
+    const cfg = componentMap.get(id);
     const y = cfg?.option?.yAxis;
     if (!y) return undefined;
     return Array.isArray(y) ? y[0] : y;
-  }, [componentMap, selectedId]);
+  }, [componentMap, id]);
 
   useEffect(() => {
     if (currentYAxis) {
@@ -34,36 +40,19 @@ const YOption: FC = memo(() => {
     }
   }, [currentYAxis, form]);
 
-  const mapColorsInObject = (obj: unknown): unknown => {
-    if (obj === null || typeof obj !== 'object') return obj;
-    if (Array.isArray(obj)) return obj.map((item) => mapColorsInObject(item));
-    const next: Record<string, unknown> = {};
-    Object.entries(obj as Record<string, unknown>).forEach(([key, value]) => {
-      if (key.toLowerCase().includes('color')) {
-        next[key] = normalizeColor(value);
-      } else if (value && typeof value === 'object') {
-        next[key] = mapColorsInObject(value);
-      } else {
-        next[key] = value;
-      }
-    });
-    return next;
-  };
-
   const handleValuesChange: FormProps<YAXisOption>['onValuesChange'] = (
     _changedValues,
     allValues,
   ) => {
-    if (!selectedId) return;
-    const cfg = componentMap.get(selectedId);
+    if (!id) return;
+    const cfg = componentMap.get(id);
     const prevOption = cfg?.option ?? {};
     const yAxisValue = prevOption.yAxis as unknown;
     const rawPrevYAxis = Array.isArray(yAxisValue) ? yAxisValue[0] : yAxisValue;
 
-    const sanitizedAllValues = mapColorsInObject(allValues);
-    const nextYAxis = merge({}, rawPrevYAxis ?? {}, sanitizedAllValues);
+    const nextYAxis = merge({}, rawPrevYAxis ?? {}, allValues);
 
-    updateComponentById(selectedId, { option: { ...prevOption, yAxis: nextYAxis } });
+    updateComponentById(id, { option: { ...prevOption, yAxis: nextYAxis } });
   };
 
   return (
@@ -73,8 +62,12 @@ const YOption: FC = memo(() => {
         <Form.Item name="name" label="名称">
           <Input />
         </Form.Item>
-        <Form.Item name={['nameTextStyle', 'color']} label="颜色">
-          <ColorPicker allowClear showText style={{ width: '100%' }} />
+        <Form.Item
+          name={['nameTextStyle', 'color']}
+          label="颜色"
+          getValueFromEvent={getHexColorFromEvent}
+        >
+          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -90,8 +83,12 @@ const YOption: FC = memo(() => {
         <Form.Item name={['axisLabel', 'show']} label="展示" initialValue={true}>
           <Switch />
         </Form.Item>
-        <Form.Item name={['axisLabel', 'color']} label="颜色">
-          <ColorPicker allowClear showText style={{ width: '100%' }} />
+        <Form.Item
+          name={['axisLabel', 'color']}
+          label="颜色"
+          getValueFromEvent={getHexColorFromEvent}
+        >
+          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -107,8 +104,13 @@ const YOption: FC = memo(() => {
         <Form.Item name={['axisLine', 'show']} label="展示" initialValue={true}>
           <Switch></Switch>
         </Form.Item>
-        <Form.Item name={['axisLine', 'lineStyle', 'color']} label="颜色" initialValue="#333">
-          <ColorPicker allowClear showText style={{ width: '100%' }} />
+        <Form.Item
+          name={['axisLine', 'lineStyle', 'color']}
+          label="颜色"
+          initialValue="#333"
+          getValueFromEvent={getHexColorFromEvent}
+        >
+          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -145,8 +147,12 @@ const YOption: FC = memo(() => {
         <Form.Item name={['axisTick', 'lineStyle', 'width']} label="粗细" initialValue={1}>
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item name={['axisTick', 'lineStyle', 'color']} label="颜色">
-          <ColorPicker allowClear showText style={{ width: '100%' }} />
+        <Form.Item
+          name={['axisTick', 'lineStyle', 'color']}
+          label="颜色"
+          getValueFromEvent={getHexColorFromEvent}
+        >
+          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <p className="text-sm text-gray-400">分割线</p>
@@ -154,8 +160,13 @@ const YOption: FC = memo(() => {
         <Form.Item name={['splitLine', 'show']} label="展示" initialValue={true}>
           <Switch></Switch>
         </Form.Item>
-        <Form.Item name={['splitLine', 'lineStyle', 'color']} label="颜色" initialValue="#ccc">
-          <ColorPicker allowClear showText style={{ width: '100%' }} />
+        <Form.Item
+          name={['splitLine', 'lineStyle', 'color']}
+          label="颜色"
+          initialValue="#ccc"
+          getValueFromEvent={getHexColorFromEvent}
+        >
+          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>

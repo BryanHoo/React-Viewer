@@ -6,8 +6,8 @@ import { memo, useEffect, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
 import { useMemoizedFn } from 'ahooks';
-import useComponent from '@/hooks/useComponent';
 import FormRow from '@/components/FormRow';
+import type { PanelProps } from '@/types/materielType';
 
 interface PanelFormValues {
   title?: string;
@@ -17,17 +17,16 @@ interface PanelFormValues {
   left?: number;
 }
 
-const PanelCommon: FC = memo(() => {
+const Title: FC<PanelProps> = memo((props) => {
+  const { config: selectedItem } = props;
   const [form] = Form.useForm<PanelFormValues>();
-  const { selectedId, updateComponentRectById, updateComponentById } = useCanvasStore(
+  const { updateComponentRectById, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      selectedId: state.selectedId,
       componentMap: state.componentMap,
       updateComponentRectById: state.updateComponentRectById,
       updateComponentById: state.updateComponentById,
     })),
   );
-  const { config: selectedItem } = useComponent({ id: selectedId });
 
   const { width: canvasWidth, height: canvasHeight } = useGlobalStore(
     useShallow((state) => ({ width: state.width, height: state.height })),
@@ -136,6 +135,6 @@ const PanelCommon: FC = memo(() => {
   );
 });
 
-PanelCommon.displayName = 'PanelCommon';
+Title.displayName = 'Title';
 
-export default PanelCommon;
+export default Title;

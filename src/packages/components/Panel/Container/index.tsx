@@ -2,10 +2,9 @@ import { Form, InputNumber, Select } from 'antd';
 import { memo, useEffect, useState, type FC } from 'react';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
-import useComponent from '@/hooks/useComponent';
 import { useMemoizedFn } from 'ahooks';
 import { normalize, toCss, inferUnitFromValue, type CssUnit } from '@/utils';
-import type { MaterielCanvasItem } from '@/types/materielType';
+import type { MaterielCanvasItem, PanelProps } from '@/types/materielType';
 import FormRow from '@/components/FormRow';
 
 interface ContainerFormValues {
@@ -17,15 +16,14 @@ interface ContainerFormValues {
 
 type PaddingKey = 'paddingTop' | 'paddingBottom' | 'paddingLeft' | 'paddingRight';
 
-const Container: FC = memo(() => {
+const Container: FC<PanelProps> = memo((props) => {
+  const { config, id } = props;
   const [form] = Form.useForm<ContainerFormValues>();
-  const { selectedId, updateComponentById } = useCanvasStore(
+  const { updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      selectedId: state.selectedId,
       updateComponentById: state.updateComponentById,
     })),
   );
-  const { config } = useComponent({ id: selectedId });
 
   const [unitMap, setUnitMap] = useState<Record<PaddingKey, CssUnit>>({
     paddingTop: 'px',
@@ -56,7 +54,7 @@ const Container: FC = memo(() => {
 
   const handleValuesChange = useMemoizedFn(
     (_: Partial<ContainerFormValues>, all: ContainerFormValues) => {
-      if (!selectedId) return;
+      if (!id) return;
 
       const next: Partial<MaterielCanvasItem> = {};
       const top = toCss(normalize(all.paddingTop), unitMap.paddingTop);
@@ -69,17 +67,17 @@ const Container: FC = memo(() => {
       next.paddingBottom = bottom;
       next.paddingLeft = left;
 
-      updateComponentById(selectedId, next);
+      updateComponentById(id, next);
     },
   );
 
   const handleUnitChange = useMemoizedFn((nextUnit: CssUnit, key: PaddingKey) => {
-    if (!selectedId) return;
+    if (!id) return;
     setUnitMap((prev) => ({ ...prev, [key]: nextUnit }));
     const value = form.getFieldValue(key) as number | undefined;
     if (value === undefined) return;
     const css = toCss(normalize(value), nextUnit);
-    updateComponentById(selectedId, { [key]: css });
+    updateComponentById(id, { [key]: css });
   });
 
   const select = useMemoizedFn((key: PaddingKey) => {

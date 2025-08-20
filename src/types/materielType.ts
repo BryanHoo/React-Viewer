@@ -23,10 +23,22 @@ export interface MaterielCanvasItem extends MaterielItem {
   zIndex?: number;
 }
 
+export interface PanelProps {
+  config?: MaterielCanvasItem;
+  id: string;
+  index?: number;
+}
+
 export interface PackageConfig {
   config: MaterielItem[];
   components: Record<string, ComponentType<any>>;
-  panels: Record<string, ComponentType>;
+  panels: Record<string, ComponentType<PanelProps>>;
 }
 
 export type OptionKey = 'xAxis' | 'yAxis' | 'legend';
+
+export type TypeItemConfig = {
+  label: string;
+  value: string;
+  component: ComponentType<PanelProps>;
+};

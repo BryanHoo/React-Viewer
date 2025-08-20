@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useMemoizedFn } from 'ahooks';
 import type { OnDrag, OnDragEnd, OnResize, OnResizeEnd } from 'react-moveable';
+import { isResizeEvent } from '../../../utils/moveable';
 
 interface UseMoveableHandlersParams {
   canvasRef: React.RefObject<HTMLDivElement>;
@@ -126,17 +127,20 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
   });
 
   const onResizeEnd = useMemoizedFn((e: OnResizeEnd) => {
-    const {
-      target,
-      width: nextW,
-      height: nextH,
-    } = e as unknown as {
-      target: HTMLElement;
-      width: number;
-      height: number;
-    };
+    const { target } = e as unknown as { target: HTMLElement };
     const el = target;
-    const before = resizeBeforeTranslateRef.current;
+
+    // Prefer final snapshot from last resize event; fallback to DOM
+    const last = (e as unknown as { lastEvent?: unknown }).lastEvent;
+    const hasLastResize = isResizeEvent(last);
+    const nextW = hasLastResize ? last.width : el.offsetWidth;
+    const nextH = hasLastResize ? last.height : el.offsetHeight;
+    const beforeFromLast = hasLastResize ? last.drag?.beforeTranslate : undefined;
+
+    const before = Array.isArray(beforeFromLast)
+      ? beforeFromLast
+      : resizeBeforeTranslateRef.current;
+
     const style = getComputedStyle(el);
     const baseLeft = parseFloat(style.left) || 0;
     const baseTop = parseFloat(style.top) || 0;
@@ -147,7 +151,7 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
 
     const clamped = clampRect({ left: l, top: t, width: w, height: h });
 
-    // Clear temp transform; styles will be finalized by store writeback
+    // Clear temp transform; finalize styles
     el.style.transform = '';
     el.style.width = `${clamped.width}px`;
     el.style.height = `${clamped.height}px`;

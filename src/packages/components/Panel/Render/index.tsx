@@ -1,7 +1,7 @@
 import CustomSegmented from '@/components/CustomSegmented';
-import useComponent from '@/hooks/useComponent';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useGlobalStore } from '@/store/globalStore';
+import type { PanelProps } from '@/types/materielType';
 import { useMemoizedFn } from 'ahooks';
 import { Form } from 'antd';
 import { memo, useEffect, type FC } from 'react';
@@ -12,7 +12,8 @@ interface RenderForm {
   componentRenderType: 'svg' | 'canvas' | 'inherit';
 }
 
-const Render: FC = memo(() => {
+const Render: FC<PanelProps> = memo((props) => {
+  const { config, id } = props;
   const [form] = Form.useForm<RenderForm>();
   const { echartsRenderer, setEchartsRenderer } = useGlobalStore(
     useShallow((state) => ({
@@ -20,21 +21,18 @@ const Render: FC = memo(() => {
       setEchartsRenderer: state.setEchartsRenderer,
     })),
   );
-  const { selectedId, updateComponentById } = useCanvasStore(
+  const { updateComponentById } = useCanvasStore(
     useShallow((state) => ({
-      selectedId: state.selectedId,
       updateComponentById: state.updateComponentById,
     })),
   );
-
-  const { config } = useComponent({ id: selectedId });
 
   const handleValuesChange = useMemoizedFn((changedFields: RenderForm) => {
     if (changedFields.globalRenderType) {
       setEchartsRenderer(changedFields.globalRenderType);
     }
     if (changedFields.componentRenderType) {
-      updateComponentById(selectedId!, { renderer: changedFields.componentRenderType });
+      updateComponentById(id, { renderer: changedFields.componentRenderType });
     }
   });
 
