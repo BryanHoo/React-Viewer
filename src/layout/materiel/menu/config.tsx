@@ -7,7 +7,7 @@ import {
   Ungroup,
 } from '@icon-park/react';
 import type { MenuConfig } from '@/types/menuType';
-import echartsItems from '@/packages/echarts';
+import { echartsItems } from '@/packages';
 
 export const menuConfig: MenuConfig = {
   echarts: {

@@ -1,5 +1,6 @@
 import type { TypeItemConfig } from '@/types/materielType';
 import Bar from './items/Bar';
+import Line from './items/Line';
 
 export const typeItemConfig: Record<string, TypeItemConfig> = {
   bar: {
@@ -10,6 +11,6 @@ export const typeItemConfig: Record<string, TypeItemConfig> = {
   line: {
     label: '折线图',
     value: 'line',
-    component: () => null,
+    component: Line,
   },
 };

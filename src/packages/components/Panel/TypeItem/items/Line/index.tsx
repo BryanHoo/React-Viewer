@@ -1,19 +1,21 @@
 import FormRow from '@/components/FormRow';
-import { Form, InputNumber } from 'antd';
-import type { FC } from 'react';
-import { memo, useEffect, useMemo } from 'react';
 import type { PanelProps } from '@/types/materielType';
+import { Form, InputNumber, Select, Switch } from 'antd';
+import { memo, type FC, useEffect, useMemo } from 'react';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { merge } from 'lodash-es';
 import { useMemoizedFn } from 'ahooks';
 import Label from '../../components/Label';
+import type { EChartsOption } from 'echarts';
 
-interface BarSeriesFormValues {
-  barWidth?: number;
-  itemStyle?: {
-    borderRadius?: number | number[];
+interface LineSeriesFormValues {
+  lineStyle?: {
+    width?: number;
+    type?: 'solid' | 'dashed' | 'dotted';
   };
+  smooth?: boolean;
+  symbolSize?: number;
   label?: {
     show?: boolean;
     fontSize?: number;
@@ -22,9 +24,9 @@ interface BarSeriesFormValues {
   };
 }
 
-const Bar: FC<PanelProps> = memo((props) => {
+const Line: FC<PanelProps> = memo((props) => {
   const { id, index } = props;
-  const [form] = Form.useForm<BarSeriesFormValues>();
+  const [form] = Form.useForm<LineSeriesFormValues>();
 
   const { componentMap, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
@@ -40,11 +42,11 @@ const Bar: FC<PanelProps> = memo((props) => {
     if (!seriesValue) return undefined;
     if (Array.isArray(seriesValue)) {
       if (typeof index === 'number' && index >= 0 && index < seriesValue.length) {
-        return seriesValue[index] as BarSeriesFormValues | undefined;
+        return seriesValue[index] as LineSeriesFormValues | undefined;
       }
-      return seriesValue[0] as BarSeriesFormValues | undefined;
+      return seriesValue[0] as LineSeriesFormValues | undefined;
     }
-    return seriesValue as BarSeriesFormValues | undefined;
+    return seriesValue as LineSeriesFormValues | undefined;
   }, [componentMap, id, index]);
 
   useEffect(() => {
@@ -52,14 +54,13 @@ const Bar: FC<PanelProps> = memo((props) => {
       form.resetFields();
       return;
     }
-    const borderRadius = currentSeries?.itemStyle?.borderRadius;
-    const normalizedBorderRadius = Array.isArray(borderRadius) ? borderRadius[0] : borderRadius;
-
     form.setFieldsValue({
-      barWidth: currentSeries.barWidth,
-      itemStyle: {
-        borderRadius: normalizedBorderRadius,
+      lineStyle: {
+        width: currentSeries.lineStyle?.width,
+        type: currentSeries.lineStyle?.type,
       },
+      smooth: currentSeries.smooth,
+      symbolSize: currentSeries.symbolSize,
       label: {
         show: currentSeries.label?.show,
         fontSize: currentSeries.label?.fontSize,
@@ -71,36 +72,54 @@ const Bar: FC<PanelProps> = memo((props) => {
   }, [currentSeries, form]);
 
   const handleValuesChange = useMemoizedFn(
-    (_: Partial<BarSeriesFormValues>, allValues: BarSeriesFormValues) => {
+    (_: Partial<LineSeriesFormValues>, allValues: LineSeriesFormValues) => {
       if (!id) return;
       const cfg = componentMap.get(id);
       const prevOption = cfg?.option ?? {};
       const prevSeries = prevOption.series as unknown;
 
-      const nextPartial: BarSeriesFormValues = merge({}, allValues);
+      const nextPartial: LineSeriesFormValues = merge({}, allValues);
 
       if (Array.isArray(prevSeries)) {
         const targetIndex = typeof index === 'number' && index >= 0 ? index : 0;
         const nextSeriesArray = [...prevSeries];
         const prevTarget = (nextSeriesArray[targetIndex] ?? {}) as Record<string, unknown>;
         nextSeriesArray[targetIndex] = merge({}, prevTarget, nextPartial);
-        updateComponentById(id, { option: { ...prevOption, series: nextSeriesArray } });
+        updateComponentById(id, {
+          option: { ...prevOption, series: nextSeriesArray as EChartsOption['series'] },
+        });
         return;
       }
 
       const nextSeriesObj = merge({}, (prevSeries ?? {}) as Record<string, unknown>, nextPartial);
-      updateComponentById(id, { option: { ...prevOption, series: nextSeriesObj } });
+      updateComponentById(id, {
+        option: { ...prevOption, series: nextSeriesObj as EChartsOption['series'] },
+      });
     },
   );
 
   return (
-    <Form colon={false} form={form} onValuesChange={handleValuesChange}>
+    <Form colon={false} labelCol={{ span: 7 }} form={form} onValuesChange={handleValuesChange}>
       <FormRow>
-        <Form.Item label="宽度" name="barWidth">
+        <Form.Item label="宽度" name={['lineStyle', 'width']} initialValue={2}>
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item label="圆角" name={['itemStyle', 'borderRadius']} initialValue={0}>
-          <InputNumber min={0} style={{ width: '100%' }} />
+        <Form.Item label="类型" name={['lineStyle', 'type']} initialValue="solid">
+          <Select
+            options={[
+              { label: '实线', value: 'solid' },
+              { label: '虚线', value: 'dashed' },
+              { label: '点线', value: 'dotted' },
+            ]}
+          />
+        </Form.Item>
+      </FormRow>
+      <FormRow>
+        <Form.Item label="曲线" name="smooth" initialValue={false}>
+          <Switch />
+        </Form.Item>
+        <Form.Item label="点大小" name="symbolSize" initialValue={4}>
+          <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <Label />
@@ -108,6 +127,6 @@ const Bar: FC<PanelProps> = memo((props) => {
   );
 });
 
-Bar.displayName = 'Bar';
+Line.displayName = 'Line';
 
-export default Bar;
+export default Line;

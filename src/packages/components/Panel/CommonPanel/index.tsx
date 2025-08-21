@@ -74,7 +74,7 @@ const CommonPanel: FC<CommonPanelProps> = memo(
         return TypeItem({
           itemKey: `${type}-${index}`,
           type,
-          label: typeItemConfig[type]?.label,
+          label: `${typeItemConfig[type]?.label}-${index + 1}`,
           allowSwitch: false,
           config,
           id,

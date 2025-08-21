@@ -16,15 +16,18 @@ import type { MaterielItem } from '@/types/materielType';
 import { clampRectToCanvas, isMaterielItem } from '@/utils/rect';
 import type { Rect, CanvasBounds } from '@/utils/rect';
 import useComponent from '@/hooks/useComponent';
+import { cloneDeep } from 'lodash-es';
+import useWheelZoomOrScroll from './hooks/useWheelZoomOrScroll';
 
 const Canvas: React.FC = memo(() => {
-  const { width, height, scale, setScale, isDragging } = useGlobalStore(
+  const { width, height, scale, setScale, isDragging, scaleLock } = useGlobalStore(
     useShallow((state) => ({
       width: state.width,
       height: state.height,
       scale: state.scale,
       setScale: state.setScale,
       isDragging: state.isDragging,
+      scaleLock: state.scaleLock,
     })),
   );
   const { componentMap, addComponent, selectedId, setSelectedId, updateComponentRectById } =
@@ -46,6 +49,15 @@ const Canvas: React.FC = memo(() => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const size = useSize(containerRef);
+
+  useWheelZoomOrScroll({
+    containerRef,
+    scale,
+    setScale,
+    scaleLock,
+    minScale: 10,
+    maxScale: 200,
+  });
 
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [scrollTop, setScrollTop] = useState<number>(0);
@@ -90,6 +102,7 @@ const Canvas: React.FC = memo(() => {
       const newId = generateId(materielConfig.id);
       addComponent({
         ...materielConfig,
+        option: cloneDeep(materielConfig.option),
         id: newId,
         top: clamped.top,
         left: clamped.left,
