@@ -1,4 +1,4 @@
-import SettingAlign, { type AlignDirection } from '@/components/SettingAlign';
+import SettingAlign from '@/components/SettingAlign';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useDebounceFn } from 'ahooks';
 import { Form, Input, InputNumber } from 'antd';
@@ -64,33 +64,9 @@ const Title: FC<PanelProps> = memo((props) => {
     { wait: 1000 },
   );
 
-  const handleAlignChange = useMemoizedFn((direction: AlignDirection) => {
+  const handleAlignChange = useMemoizedFn((next: { top?: number; left?: number }) => {
     if (!selectedItem) return;
-    const next: { top?: number; left?: number } = {};
-    switch (direction) {
-      case 'top':
-        next.top = 0;
-        break;
-      case 'bottom':
-        next.top = canvasHeight - selectedItem.height;
-        break;
-      case 'vertical-center':
-        next.top = Math.round((canvasHeight - selectedItem.height) / 2);
-        break;
-      case 'left':
-        next.left = 0;
-        break;
-      case 'right':
-        next.left = canvasWidth - selectedItem.width;
-        break;
-      case 'horizontal-center':
-        next.left = Math.round((canvasWidth - selectedItem.width) / 2);
-        break;
-      default:
-        break;
-    }
     updateComponentRectById(selectedItem.id, next);
-    // 同步到表单显示
     form.setFieldsValue({
       top: next.top ?? selectedItem.top,
       left: next.left ?? selectedItem.left,
@@ -129,7 +105,14 @@ const Title: FC<PanelProps> = memo((props) => {
         </FormRow>
       </Form.Item>
       <Form.Item label="对齐方式">
-        <SettingAlign onChange={handleAlignChange} disabled={!selectedItem} />
+        <SettingAlign
+          containerWidth={canvasWidth}
+          containerHeight={canvasHeight}
+          targetWidth={selectedItem?.width ?? 0}
+          targetHeight={selectedItem?.height ?? 0}
+          onChange={handleAlignChange}
+          disabled={!selectedItem}
+        />
       </Form.Item>
     </Form>
   );

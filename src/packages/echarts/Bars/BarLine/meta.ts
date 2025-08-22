@@ -6,7 +6,7 @@ export default {
   title: '柱状折线图',
   image,
   type: '柱状图',
-  componentName: 'BarLine',
-  panel: 'BarLinePanel',
+  componentName: 'BaseECharts',
+  panel: 'CommonPanel',
   option: defaultOption,
 };

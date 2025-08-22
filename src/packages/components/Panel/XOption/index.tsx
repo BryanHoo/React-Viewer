@@ -1,4 +1,4 @@
-import { ColorPicker, Form, Input, InputNumber, Select, Switch } from 'antd';
+import { Form, Input, InputNumber, Select, Switch } from 'antd';
 import type { FormProps } from 'antd';
 import type { XAXisOption } from 'echarts/types/dist/shared';
 import { memo, useEffect, useMemo, type FC } from 'react';
@@ -7,7 +7,7 @@ import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { merge } from 'lodash-es';
 import type { MaterielCanvasItem } from '@/types/materielType';
-import { getHexColorFromEvent } from '@/utils/chart';
+import CustomColorPicker from '@/components/CustomColorPicker';
 
 interface XOptionProps {
   config?: MaterielCanvasItem;
@@ -62,12 +62,8 @@ const XOption: FC<XOptionProps> = memo((props) => {
         <Form.Item name="name" label="名称">
           <Input />
         </Form.Item>
-        <Form.Item
-          name={['nameTextStyle', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['nameTextStyle', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -83,12 +79,8 @@ const XOption: FC<XOptionProps> = memo((props) => {
         <Form.Item name={['axisLabel', 'show']} label="展示" initialValue={true}>
           <Switch />
         </Form.Item>
-        <Form.Item
-          name={['axisLabel', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['axisLabel', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -104,13 +96,8 @@ const XOption: FC<XOptionProps> = memo((props) => {
         <Form.Item name={['axisLine', 'show']} label="展示" initialValue={true}>
           <Switch></Switch>
         </Form.Item>
-        <Form.Item
-          name={['axisLine', 'lineStyle', 'color']}
-          label="颜色"
-          initialValue="#333"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['axisLine', 'lineStyle', 'color']} label="颜色" initialValue="#333">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -147,12 +134,8 @@ const XOption: FC<XOptionProps> = memo((props) => {
         <Form.Item name={['axisTick', 'lineStyle', 'width']} label="粗细" initialValue={1}>
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item
-          name={['axisTick', 'lineStyle', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['axisTick', 'lineStyle', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <p className="text-sm text-gray-400">分割线</p>
@@ -160,13 +143,8 @@ const XOption: FC<XOptionProps> = memo((props) => {
         <Form.Item name={['splitLine', 'show']} label="展示" initialValue={true}>
           <Switch></Switch>
         </Form.Item>
-        <Form.Item
-          name={['splitLine', 'lineStyle', 'color']}
-          label="颜色"
-          initialValue="#ccc"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['splitLine', 'lineStyle', 'color']} label="颜色" initialValue="#ccc">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>

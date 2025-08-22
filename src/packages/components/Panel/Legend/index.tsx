@@ -1,14 +1,14 @@
 import type { EChartsOption } from 'echarts';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useMemoizedFn } from 'ahooks';
-import { ColorPicker, Form, InputNumber, Select } from 'antd';
+import { Form, InputNumber, Select } from 'antd';
 import { memo, useEffect, useState, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { inferUnitFromValue, toEchartsLength, type CssUnit } from '@/utils';
 import type { LegendOption } from 'echarts/types/src/component/legend/LegendModel.js';
 import FormRow from '@/components/FormRow';
 import type { PanelProps } from '@/types/materielType';
-import { getHexColorFromEvent } from '@/utils/chart';
+import CustomColorPicker from '@/components/CustomColorPicker';
 
 const Legend: FC<PanelProps> = memo((props) => {
   const { config, id } = props;
@@ -127,12 +127,8 @@ const Legend: FC<PanelProps> = memo((props) => {
         </Form.Item>
       </FormRow>
       <FormRow>
-        <Form.Item
-          name={['textStyle', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['textStyle', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item name={['textStyle', 'fontSize']} label="大小">
           <InputNumber min={1} style={{ width: '100%' }} />

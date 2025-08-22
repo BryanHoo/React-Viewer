@@ -1,30 +1,31 @@
 import FormRow from '@/components/FormRow';
-import { getHexColorFromEvent } from '@/utils/chart';
-import { ColorPicker, Form, InputNumber, Select, Switch } from 'antd';
+import { Form, InputNumber, Select, Switch } from 'antd';
+import CustomColorPicker from '@/components/CustomColorPicker';
 import { type FC, memo } from 'react';
 
-const Label: FC = memo(() => {
+interface LabelProps {
+  seriesIndex?: number;
+}
+
+const Label: FC<LabelProps> = memo((props) => {
+  const { seriesIndex = 0 } = props;
+  const base: (string | number)[] = ['option', 'series', seriesIndex, 'label'];
   return (
     <>
       <p className="text-sm text-gray-400">标签</p>
       <FormRow>
-        <Form.Item label="展示" name={['label', 'show']} initialValue={true}>
+        <Form.Item label="展示" name={[...base, 'show']} initialValue={true}>
           <Switch />
         </Form.Item>
-        <Form.Item label="大小" name={['label', 'fontSize']} initialValue={12}>
+        <Form.Item label="大小" name={[...base, 'fontSize']} initialValue={12}>
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
-        <Form.Item
-          label="颜色"
-          name={['label', 'color']}
-          initialValue="#fff"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item label="颜色" name={[...base, 'color']} initialValue="#fff">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item label="位置" name={['label', 'position']} initialValue="inside">
+        <Form.Item label="位置" name={[...base, 'position']} initialValue="inside">
           <Select
             options={[
               { label: '居上', value: 'top' },

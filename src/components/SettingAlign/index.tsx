@@ -19,19 +19,36 @@ export type AlignDirection =
   | 'right';
 
 interface SettingAlignProps {
-  onChange?: (direction: AlignDirection) => void;
+  containerWidth: number;
+  containerHeight: number;
+  targetWidth: number;
+  targetHeight: number;
+  onChange?: (next: { top?: number; left?: number }) => void;
   disabled?: boolean;
 }
 
 const SettingAlign = memo((props: SettingAlignProps) => {
-  const { onChange, disabled = false } = props;
+  const {
+    containerWidth,
+    containerHeight,
+    targetWidth,
+    targetHeight,
+    onChange,
+    disabled = false,
+  } = props;
 
-  const handleAlignTop = useMemoizedFn(() => onChange?.('top'));
-  const handleAlignMiddle = useMemoizedFn(() => onChange?.('vertical-center'));
-  const handleAlignBottom = useMemoizedFn(() => onChange?.('bottom'));
-  const handleAlignLeft = useMemoizedFn(() => onChange?.('left'));
-  const handleAlignCenter = useMemoizedFn(() => onChange?.('horizontal-center'));
-  const handleAlignRight = useMemoizedFn(() => onChange?.('right'));
+  const handleAlignTop = useMemoizedFn(() => onChange?.({ top: 0 }));
+  const handleAlignMiddle = useMemoizedFn(() =>
+    onChange?.({ top: Math.round((containerHeight - targetHeight) / 2) }),
+  );
+  const handleAlignBottom = useMemoizedFn(() =>
+    onChange?.({ top: containerHeight - targetHeight }),
+  );
+  const handleAlignLeft = useMemoizedFn(() => onChange?.({ left: 0 }));
+  const handleAlignCenter = useMemoizedFn(() =>
+    onChange?.({ left: Math.round((containerWidth - targetWidth) / 2) }),
+  );
+  const handleAlignRight = useMemoizedFn(() => onChange?.({ left: containerWidth - targetWidth }));
 
   return (
     <div className="w-full flex items-center justify-between gap-2">

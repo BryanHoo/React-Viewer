@@ -1,6 +1,7 @@
 import { memo, type FC } from 'react';
 import CustomSegmented from '@/components/CustomSegmented';
-import { ColorPicker, Form, InputNumber, Upload } from 'antd';
+import { Form, InputNumber, Upload } from 'antd';
+import CustomColorPicker from '@/components/CustomColorPicker';
 import { PictureOutlined } from '@ant-design/icons';
 import { useGlobalStore } from '@/store/globalStore';
 import { useShallow } from 'zustand/shallow';
@@ -77,7 +78,7 @@ const GlobalPanel: FC = memo(() => {
           </Form.Item>
         </div>
         <Form.Item label="背景颜色" name="backgroundColor">
-          <ColorPicker showText allowClear />
+          <CustomColorPicker showText allowClear />
         </Form.Item>
         <Form.Item label="适配方式" name="backgroundFit">
           <CustomSegmented
