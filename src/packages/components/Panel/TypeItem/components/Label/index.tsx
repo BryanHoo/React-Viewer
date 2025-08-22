@@ -3,29 +3,23 @@ import { Form, InputNumber, Select, Switch } from 'antd';
 import CustomColorPicker from '@/components/CustomColorPicker';
 import { type FC, memo } from 'react';
 
-interface LabelProps {
-  seriesIndex?: number;
-}
-
-const Label: FC<LabelProps> = memo((props) => {
-  const { seriesIndex = 0 } = props;
-  const base: (string | number)[] = ['option', 'series', seriesIndex, 'label'];
+const Label: FC = memo(() => {
   return (
     <>
       <p className="text-sm text-gray-400">标签</p>
       <FormRow>
-        <Form.Item label="展示" name={[...base, 'show']} initialValue={true}>
+        <Form.Item label="展示" name={['label', 'show']} initialValue={true}>
           <Switch />
         </Form.Item>
-        <Form.Item label="大小" name={[...base, 'fontSize']} initialValue={12}>
+        <Form.Item label="大小" name={['label', 'itemStyle', 'fontSize']} initialValue={12}>
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
-        <Form.Item label="颜色" name={[...base, 'color']} initialValue="#fff">
+        <Form.Item label="颜色" name={['label', 'itemStyle', 'color']} initialValue="#fff">
           <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item label="位置" name={[...base, 'position']} initialValue="inside">
+        <Form.Item label="位置" name={['label', 'position']} initialValue="inside">
           <Select
             options={[
               { label: '居上', value: 'top' },

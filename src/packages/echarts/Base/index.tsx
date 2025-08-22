@@ -10,9 +10,10 @@ interface BarCommonProps {
 
 const BaseECharts: FC<BarCommonProps> = memo((props) => {
   const { id } = props;
-  const { echartsRenderer } = useGlobalStore(
+  const { echartsRenderer, themeColor } = useGlobalStore(
     useShallow((state) => ({
       echartsRenderer: state.echartsRenderer,
+      themeColor: state.themeColor,
     })),
   );
 
@@ -23,7 +24,7 @@ const BaseECharts: FC<BarCommonProps> = memo((props) => {
     return echartsRenderer;
   }, [config?.renderer, echartsRenderer]);
 
-  return <ECharts option={config?.option ?? {}} renderer={renderer} />;
+  return <ECharts option={config?.option ?? {}} renderer={renderer} theme={themeColor} />;
 });
 
 BaseECharts.displayName = 'BaseECharts';

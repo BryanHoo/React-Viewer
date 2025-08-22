@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import type { ChartColorsNameType } from '@/components/ECharts/chartThemes';
+import { defaultTheme } from '@/components/ECharts/chartThemes';
 
 /**
  * 全局状态类型定义
@@ -12,6 +14,12 @@ export interface GlobalState {
   scale: number;
   /** 画布缩放比例锁定 */
   scaleLock: boolean;
+  /** 背景图片（DataURL 或 URL） */
+  backgroundImage?: string;
+  /** 背景颜色 */
+  backgroundColor: string;
+  /** 背景适配方式 */
+  backgroundFit: 'auto' | 'width' | 'height' | 'cover';
   /** 显示图表 */
   showChart?: boolean;
   /** 显示图层 */
@@ -24,6 +32,8 @@ export interface GlobalState {
   activeMenu: string;
   /** echarts渲染器 */
   echartsRenderer: 'svg' | 'canvas';
+  /** 全局主题色（ECharts 主题名） */
+  themeColor: ChartColorsNameType;
 }
 
 /**
@@ -34,12 +44,16 @@ export interface GlobalActions {
   setHeight: (height: number) => void;
   setScale: (scale: number) => void;
   setScaleLock: (scaleLock: boolean) => void;
+  setBackgroundImage: (image?: string) => void;
+  setBackgroundColor: (color: string) => void;
+  setBackgroundFit: (fit: 'auto' | 'width' | 'height' | 'cover') => void;
   setShowChart: (showChart: boolean) => void;
   setShowLayer: (showLayer: boolean) => void;
   setShowDetail: (showDetail: boolean) => void;
   setIsDragging: (isDragging: boolean) => void;
   setActiveMenu: (activeMenu: string) => void;
   setEchartsRenderer: (echartsRenderer: 'svg' | 'canvas') => void;
+  setThemeColor: (theme: ChartColorsNameType) => void;
 }
 
 /**
@@ -52,20 +66,28 @@ export const useGlobalStore = create<GlobalState & GlobalActions>()((set) => ({
   scale: 100,
   autoScale: undefined,
   scaleLock: false,
+  backgroundImage: undefined,
+  backgroundColor: '#232324',
+  backgroundFit: 'auto',
   showChart: true,
   showLayer: false,
   showDetail: true,
   isDragging: false,
   activeMenu: 'echarts',
   echartsRenderer: 'svg',
+  themeColor: defaultTheme,
   setWidth: (width) => set({ width }),
   setHeight: (height) => set({ height }),
   setScale: (scale) => set({ scale }),
   setScaleLock: (scaleLock) => set({ scaleLock }),
+  setBackgroundImage: (image) => set({ backgroundImage: image }),
+  setBackgroundColor: (color) => set({ backgroundColor: color }),
+  setBackgroundFit: (fit) => set({ backgroundFit: fit }),
   setShowChart: (showChart) => set({ showChart }),
   setShowLayer: (showLayer) => set({ showLayer }),
   setShowDetail: (showDetail) => set({ showDetail }),
   setIsDragging: (isDragging) => set({ isDragging }),
   setActiveMenu: (activeMenu) => set({ activeMenu }),
   setEchartsRenderer: (echartsRenderer) => set({ echartsRenderer }),
+  setThemeColor: (theme) => set({ themeColor: theme }),
 }));

@@ -1,22 +1,25 @@
-import { ColorPicker, Form, Input, InputNumber, Select, Switch } from 'antd';
+import { Form, Input, InputNumber, Select, Switch } from 'antd';
 import type { FormProps } from 'antd';
-import type { YAXisOption } from 'echarts/types/dist/shared';
+import type { XAXisOption, YAXisOption } from 'echarts/types/dist/shared';
 import { memo, useEffect, useMemo, type FC } from 'react';
 import FormRow from '@/components/FormRow';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { merge } from 'lodash-es';
 import type { MaterielCanvasItem } from '@/types/materielType';
-import { getHexColorFromEvent } from '@/utils/chart';
+import CustomColorPicker from '@/components/CustomColorPicker';
 
-interface YOptionProps {
+interface AxisOptionProps {
   config?: MaterielCanvasItem;
   id: string;
+  axis: 'x' | 'y';
 }
 
-const YOption: FC<YOptionProps> = memo((props) => {
-  const { id } = props;
-  const [form] = Form.useForm<YAXisOption>();
+type AnyAxisOption = XAXisOption | YAXisOption;
+
+const AxisOption: FC<AxisOptionProps> = memo((props) => {
+  const { id, axis } = props;
+  const [form] = Form.useForm<AnyAxisOption>();
   const { componentMap, updateComponentById } = useCanvasStore(
     useShallow((state) => ({
       componentMap: state.componentMap,
@@ -24,36 +27,71 @@ const YOption: FC<YOptionProps> = memo((props) => {
     })),
   );
 
-  const currentYAxis = useMemo(() => {
+  const currentAxis = useMemo(() => {
     if (!id) return undefined;
     const cfg = componentMap.get(id);
-    const y = cfg?.option?.yAxis;
-    if (!y) return undefined;
-    return Array.isArray(y) ? y[0] : y;
-  }, [componentMap, id]);
+    const axisValue = axis === 'x' ? cfg?.option?.xAxis : cfg?.option?.yAxis;
+    return Array.isArray(axisValue) ? axisValue[0] : axisValue;
+  }, [componentMap, id, axis]);
 
   useEffect(() => {
-    if (currentYAxis) {
-      form.setFieldsValue(currentYAxis);
+    if (currentAxis) {
+      const splitLineShow = currentAxis.type === 'category' ? false : true;
+      form.setFieldsValue({
+        ...(currentAxis as AnyAxisOption),
+        splitLine: {
+          show: splitLineShow,
+          ...(currentAxis as AnyAxisOption).splitLine,
+        },
+      } as AnyAxisOption);
     } else {
       form.resetFields();
     }
-  }, [currentYAxis, form]);
+  }, [currentAxis, form]);
 
-  const handleValuesChange: FormProps<YAXisOption>['onValuesChange'] = (
+  const handleValuesChange: FormProps<AnyAxisOption>['onValuesChange'] = (
     _changedValues,
     allValues,
   ) => {
     if (!id) return;
     const cfg = componentMap.get(id);
     const prevOption = cfg?.option ?? {};
-    const yAxisValue = prevOption.yAxis as unknown;
-    const rawPrevYAxis = Array.isArray(yAxisValue) ? yAxisValue[0] : yAxisValue;
+    const prevAxisValue = axis === 'x' ? prevOption.xAxis : prevOption.yAxis;
+    const rawPrevAxis = Array.isArray(prevAxisValue) ? prevAxisValue[0] : prevAxisValue;
 
-    const nextYAxis = merge({}, rawPrevYAxis ?? {}, allValues);
+    if (axis === 'x') {
+      const typedPrev = (rawPrevAxis ?? {}) as XAXisOption;
+      const nextXAxis = merge({}, typedPrev, allValues) as XAXisOption;
+      updateComponentById(id, {
+        option: {
+          ...prevOption,
+          xAxis: nextXAxis,
+        },
+      });
+      return;
+    }
 
-    updateComponentById(id, { option: { ...prevOption, yAxis: nextYAxis } });
+    const typedPrev = (rawPrevAxis ?? {}) as YAXisOption;
+    const nextYAxis = merge({}, typedPrev, allValues) as YAXisOption;
+    updateComponentById(id, {
+      option: {
+        ...prevOption,
+        yAxis: nextYAxis,
+      },
+    });
   };
+
+  const positionOptions = useMemo(() => {
+    return axis === 'x'
+      ? [
+          { label: '顶部', value: 'top' },
+          { label: '底部', value: 'bottom' },
+        ]
+      : [
+          { label: '左侧', value: 'left' },
+          { label: '右侧', value: 'right' },
+        ];
+  }, [axis]);
 
   return (
     <Form colon={false} labelCol={{ span: 7 }} form={form} onValuesChange={handleValuesChange}>
@@ -62,12 +100,8 @@ const YOption: FC<YOptionProps> = memo((props) => {
         <Form.Item name="name" label="名称">
           <Input />
         </Form.Item>
-        <Form.Item
-          name={['nameTextStyle', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['nameTextStyle', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -83,12 +117,8 @@ const YOption: FC<YOptionProps> = memo((props) => {
         <Form.Item name={['axisLabel', 'show']} label="展示" initialValue={true}>
           <Switch />
         </Form.Item>
-        <Form.Item
-          name={['axisLabel', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['axisLabel', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -104,13 +134,8 @@ const YOption: FC<YOptionProps> = memo((props) => {
         <Form.Item name={['axisLine', 'show']} label="展示" initialValue={true}>
           <Switch></Switch>
         </Form.Item>
-        <Form.Item
-          name={['axisLine', 'lineStyle', 'color']}
-          label="颜色"
-          initialValue="#333"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['axisLine', 'lineStyle', 'color']} label="颜色" initialValue="#333">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -118,12 +143,7 @@ const YOption: FC<YOptionProps> = memo((props) => {
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item name="position" label="位置">
-          <Select
-            options={[
-              { label: '左侧', value: 'left' },
-              { label: '右侧', value: 'right' },
-            ]}
-          />
+          <Select options={positionOptions} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -147,12 +167,8 @@ const YOption: FC<YOptionProps> = memo((props) => {
         <Form.Item name={['axisTick', 'lineStyle', 'width']} label="粗细" initialValue={1}>
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item
-          name={['axisTick', 'lineStyle', 'color']}
-          label="颜色"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['axisTick', 'lineStyle', 'color']} label="颜色">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <p className="text-sm text-gray-400">分割线</p>
@@ -160,13 +176,8 @@ const YOption: FC<YOptionProps> = memo((props) => {
         <Form.Item name={['splitLine', 'show']} label="展示" initialValue={true}>
           <Switch></Switch>
         </Form.Item>
-        <Form.Item
-          name={['splitLine', 'lineStyle', 'color']}
-          label="颜色"
-          initialValue="#ccc"
-          getValueFromEvent={getHexColorFromEvent}
-        >
-          <ColorPicker allowClear showText format="hex" style={{ width: '100%' }} />
+        <Form.Item name={['splitLine', 'lineStyle', 'color']} label="颜色" initialValue="#ccc">
+          <CustomColorPicker allowClear showText style={{ width: '100%' }} />
         </Form.Item>
       </FormRow>
       <FormRow>
@@ -187,6 +198,6 @@ const YOption: FC<YOptionProps> = memo((props) => {
   );
 });
 
-YOption.displayName = 'YOption';
+AxisOption.displayName = 'AxisOption';
 
-export default YOption;
+export default AxisOption;

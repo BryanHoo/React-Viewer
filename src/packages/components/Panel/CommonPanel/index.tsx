@@ -1,8 +1,7 @@
 import Container from '@/packages/components/Panel/Container';
 import Legend from '@/packages/components/Panel/Legend';
 import Render from '@/packages/components/Panel/Render';
-import XOption from '@/packages/components/Panel/XOption';
-import YOption from '@/packages/components/Panel/YOption';
+import AxisOption from '@/packages/components/Panel/AxisOption';
 import { useCanvasStore } from '@/store/canvasStore';
 import { Collapse, Switch, type CollapseProps } from 'antd';
 import { memo, useMemo, type FC } from 'react';
@@ -99,7 +98,7 @@ const CommonPanel: FC<CommonPanelProps> = memo(
         {
           key: 'xOption',
           label: 'X 轴',
-          children: <XOption id={id} />,
+          children: <AxisOption axis="x" id={id} />,
           extra: (
             <div onClick={handleClick}>
               <Switch
@@ -112,7 +111,7 @@ const CommonPanel: FC<CommonPanelProps> = memo(
         {
           key: 'yOption',
           label: 'Y 轴',
-          children: <YOption config={config} id={id} />,
+          children: <AxisOption axis="y" config={config} id={id} />,
           extra: (
             <div onClick={handleClick}>
               <Switch

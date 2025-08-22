@@ -1,0 +1,59 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+.row:hover {
+  border-color: #51d6a9;
+  background: rgba(22, 119, 255, 0.04);
+}
+
+.rowSelected {
+  border-color: #51d6a9 !important;
+  background: rgba(22, 119, 255, 0.06);
+}
+
+.rowDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: inherit;
+  font-size: 13px;
+  width: 60px;
+}
+
+.palette {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 0;
+  flex: 1;
+  min-width: 0;
+  justify-content: space-evenly;
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}

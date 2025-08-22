@@ -20,10 +20,23 @@ import { cloneDeep } from 'lodash-es';
 import useWheelZoomOrScroll from './hooks/useWheelZoomOrScroll';
 
 const Canvas: React.FC = memo(() => {
-  const { width, height, scale, setScale, isDragging, scaleLock } = useGlobalStore(
+  const {
+    width,
+    height,
+    scale,
+    setScale,
+    isDragging,
+    scaleLock,
+    backgroundColor,
+    backgroundImage,
+    backgroundFit,
+  } = useGlobalStore(
     useShallow((state) => ({
       width: state.width,
       height: state.height,
+      backgroundColor: state.backgroundColor,
+      backgroundImage: state.backgroundImage,
+      backgroundFit: state.backgroundFit,
       scale: state.scale,
       setScale: state.setScale,
       isDragging: state.isDragging,
@@ -49,6 +62,16 @@ const Canvas: React.FC = memo(() => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const size = useSize(containerRef);
+
+  const computedBackgroundSize = useMemo(() => {
+    return backgroundFit === 'cover'
+      ? 'cover'
+      : backgroundFit === 'width'
+        ? '100% auto'
+        : backgroundFit === 'height'
+          ? 'auto 100%'
+          : 'auto';
+  }, [backgroundFit]);
 
   useWheelZoomOrScroll({
     containerRef,
@@ -205,7 +228,6 @@ const Canvas: React.FC = memo(() => {
           ref={canvasRef}
           className={classNames(
             'flex items-center justify-center',
-            'bg-[#232324]',
             'relative',
             'overflow-hidden',
             styles.moveableTheme,
@@ -213,6 +235,11 @@ const Canvas: React.FC = memo(() => {
           style={{
             width,
             height,
+            backgroundColor,
+            backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: computedBackgroundSize,
           }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}

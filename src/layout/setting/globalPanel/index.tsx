@@ -6,6 +6,8 @@ import { PictureOutlined } from '@ant-design/icons';
 import { useGlobalStore } from '@/store/globalStore';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn, useMount } from 'ahooks';
+import ThemeColorSelector from '@/components/ThemeColorSelector';
+import type { ChartColorsNameType } from '@/components/ECharts/chartThemes';
 
 const { Dragger } = Upload;
 
@@ -15,33 +17,66 @@ interface GlobalFormType {
   backgroundImage?: string;
   backgroundColor?: string;
   backgroundFit?: string;
+  themeColor?: ChartColorsNameType;
 }
 
 const GlobalPanel: FC = memo(() => {
   const [form] = Form.useForm<GlobalFormType>();
-  const { width, height, setWidth, setHeight } = useGlobalStore(
+  const {
+    width,
+    height,
+    backgroundColor,
+    backgroundFit,
+    themeColor,
+    setWidth,
+    setHeight,
+    setBackgroundImage,
+    setBackgroundColor,
+    setBackgroundFit,
+    setThemeColor,
+  } = useGlobalStore(
     useShallow((state) => ({
       width: state.width,
       height: state.height,
+      backgroundColor: state.backgroundColor,
+      backgroundFit: state.backgroundFit,
+      themeColor: state.themeColor,
       setWidth: state.setWidth,
       setHeight: state.setHeight,
+      setBackgroundImage: state.setBackgroundImage,
+      setBackgroundColor: state.setBackgroundColor,
+      setBackgroundFit: state.setBackgroundFit,
+      setThemeColor: state.setThemeColor,
     })),
   );
 
   const handleFormChange = useMemoizedFn((_, allFields: GlobalFormType) => {
     setWidth(allFields?.width || width);
     setHeight(allFields?.height || height);
+    if (typeof allFields?.backgroundColor !== 'undefined') {
+      setBackgroundColor(allFields.backgroundColor || '#232324');
+    }
+    if (typeof allFields?.backgroundFit !== 'undefined') {
+      const fit = (allFields.backgroundFit || 'auto') as 'auto' | 'width' | 'height' | 'cover';
+      setBackgroundFit(fit);
+    }
+    if (typeof allFields?.themeColor !== 'undefined') {
+      setThemeColor(allFields.themeColor);
+    }
   });
 
   useMount(() => {
     form.setFieldsValue({
       width,
       height,
+      backgroundColor,
+      backgroundFit,
+      themeColor,
     });
   });
 
   return (
-    <div className="w-full h-full flex flex-col gap-[15px]">
+    <div className="w-full h-full flex flex-col gap-[15px] overflow-y-auto">
       <CustomSegmented options={['页面配置']} block size="large" />
       <Form layout="horizontal" colon={false} form={form} onValuesChange={handleFormChange}>
         <div className="flex items-center gap-[15px] w-full justify-between">
@@ -66,7 +101,25 @@ const GlobalPanel: FC = memo(() => {
         </div>
         <div className="flex items-center gap-[15px] w-full justify-between h-[150px] mb-[15px]">
           <Form.Item label="背景图" name="backgroundImage" noStyle className="w-full">
-            <Dragger className="w-full h-full">
+            <Dragger
+              className="w-full h-full"
+              accept="image/*"
+              maxCount={1}
+              beforeUpload={(file) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const result = typeof reader.result === 'string' ? reader.result : undefined;
+                  setBackgroundImage(result);
+                  form.setFieldValue('backgroundImage', result);
+                };
+                reader.readAsDataURL(file);
+                return false;
+              }}
+              onRemove={() => {
+                setBackgroundImage(undefined);
+                form.setFieldValue('backgroundImage', undefined);
+              }}
+            >
               <div className="flex flex-col items-center justify-center">
                 <p className="ant-upload-drag-icon">
                   <PictureOutlined />
@@ -77,7 +130,7 @@ const GlobalPanel: FC = memo(() => {
             </Dragger>
           </Form.Item>
         </div>
-        <Form.Item label="背景颜色" name="backgroundColor">
+        <Form.Item label="背景颜色" name="backgroundColor" initialValue="#232324">
           <CustomColorPicker showText allowClear />
         </Form.Item>
         <Form.Item label="适配方式" name="backgroundFit">
@@ -89,6 +142,9 @@ const GlobalPanel: FC = memo(() => {
               { value: 'cover', label: '拉伸铺满' },
             ]}
           />
+        </Form.Item>
+        <Form.Item name="themeColor">
+          <ThemeColorSelector />
         </Form.Item>
       </Form>
     </div>
