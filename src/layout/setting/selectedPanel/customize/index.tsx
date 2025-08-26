@@ -1,28 +1,18 @@
-import useComponent from '@/hooks/useComponent';
 import packages from '@/packages';
-import { useCanvasStore } from '@/store/canvasStore';
+import type { PanelProps } from '@/types/materielType';
 import { memo, useMemo, type FC } from 'react';
-import { useShallow } from 'zustand/shallow';
 
-const Customize: FC = memo(() => {
-  const { selectedId, componentMap } = useCanvasStore(
-    useShallow((state) => ({
-      selectedId: state.selectedId,
-      componentMap: state.componentMap,
-    })),
-  );
+const Customize: FC<PanelProps> = memo((props) => {
+  const { config, id } = props;
 
   const PanelComponent = useMemo(() => {
-    const config = selectedId ? componentMap.get(selectedId) : undefined;
     if (!config?.panel) return null;
     return packages.panels[config.panel];
-  }, [selectedId, componentMap]);
-
-  const { config } = useComponent({ id: selectedId });
+  }, [config]);
 
   return (
     <div className="w-full h-full">
-      {PanelComponent && selectedId && <PanelComponent config={config} id={selectedId} />}
+      {PanelComponent && id && <PanelComponent config={config} id={id} />}
     </div>
   );
 });

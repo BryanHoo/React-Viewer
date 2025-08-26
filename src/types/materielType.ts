@@ -13,6 +13,7 @@ export interface MaterielItem {
   paddingBottom?: string;
   paddingLeft?: string;
   paddingRight?: string;
+  apiType?: 'static' | 'public';
 }
 
 export interface MaterielCanvasItem extends MaterielItem {

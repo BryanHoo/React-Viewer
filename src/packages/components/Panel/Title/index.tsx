@@ -111,7 +111,6 @@ const Title: FC<PanelProps> = memo((props) => {
           targetWidth={selectedItem?.width ?? 0}
           targetHeight={selectedItem?.height ?? 0}
           onChange={handleAlignChange}
-          disabled={!selectedItem}
         />
       </Form.Item>
     </Form>

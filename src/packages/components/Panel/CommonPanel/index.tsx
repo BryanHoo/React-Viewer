@@ -20,10 +20,12 @@ interface CommonPanelProps extends PanelProps {
   defaultItems?: string[];
   // 额外渲染的面板
   extraItems?: CollapseProps['items'];
+  // 默认展开的面板
+  defaultActiveKey?: string[];
 }
 
 const CommonPanel: FC<CommonPanelProps> = memo(
-  ({ children, defaultItems, extraItems, config, id }) => {
+  ({ children, defaultItems, extraItems, config, id, defaultActiveKey }) => {
     const { updateComponentById } = useCanvasStore(
       useShallow((state) => ({
         updateComponentById: state.updateComponentById,
@@ -57,9 +59,10 @@ const CommonPanel: FC<CommonPanelProps> = memo(
     const seriesItems = useMemo(() => {
       if (!isArray(config?.option?.series)) {
         const type = config?.option?.series?.type as keyof typeof typeItemConfig;
+        const itemKey = `${type}-${id}`;
         return [
           TypeItem({
-            itemKey: `${type}-${id}`,
+            itemKey,
             type,
             label: typeItemConfig[type]?.label,
             allowSwitch: false,
@@ -162,7 +165,7 @@ const CommonPanel: FC<CommonPanelProps> = memo(
     return (
       <div className="w-full h-full">
         <Title id={id} />
-        <Collapse items={items} bordered={false} />
+        <Collapse items={items} bordered={false} defaultActiveKey={defaultActiveKey} />
         {children}
       </div>
     );
