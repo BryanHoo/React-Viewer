@@ -6,7 +6,7 @@ export default {
   title: '双柱状图',
   image,
   type: '柱状图',
-  componentName: 'BaseBarTwo',
-  panel: 'BaseBarTwoPanel',
+  componentName: 'BaseECharts',
+  panel: 'CommonPanel',
   option: defaultOption,
 };

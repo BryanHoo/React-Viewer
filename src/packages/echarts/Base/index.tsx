@@ -2,14 +2,11 @@ import ECharts from '@/components/ECharts';
 import { memo, useMemo, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
-import useComponent from '@/hooks/useComponent';
+import type { BaseEChartsProps } from '@/types/materielType';
+import classNames from '@/utils/classname';
 
-interface BarCommonProps {
-  id: string;
-}
-
-const BaseECharts: FC<BarCommonProps> = memo((props) => {
-  const { id } = props;
+const BaseECharts: FC<BaseEChartsProps> = memo((props) => {
+  const { config } = props;
   const { echartsRenderer, themeColor } = useGlobalStore(
     useShallow((state) => ({
       echartsRenderer: state.echartsRenderer,
@@ -17,14 +14,27 @@ const BaseECharts: FC<BarCommonProps> = memo((props) => {
     })),
   );
 
-  const { config } = useComponent({ id });
-
   const renderer = useMemo(() => {
     if (config?.renderer && config.renderer !== 'inherit') return config.renderer;
     return echartsRenderer;
   }, [config?.renderer, echartsRenderer]);
 
-  return <ECharts option={config?.option ?? {}} renderer={renderer} theme={themeColor} />;
+  const className = useMemo(() => {
+    if (!config?.animation) return '';
+    return classNames({
+      animate__animated: !!config?.animation,
+      [config?.animation]: true,
+    });
+  }, [config?.animation]);
+
+  return (
+    <ECharts
+      option={config?.option ?? {}}
+      className={className}
+      renderer={renderer}
+      theme={themeColor}
+    />
+  );
 });
 
 BaseECharts.displayName = 'BaseECharts';

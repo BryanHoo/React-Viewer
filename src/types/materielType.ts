@@ -14,6 +14,7 @@ export interface MaterielItem {
   paddingLeft?: string;
   paddingRight?: string;
   apiType?: 'static' | 'public';
+  animation?: string;
 }
 
 export interface MaterielCanvasItem extends MaterielItem {
@@ -28,6 +29,11 @@ export interface PanelProps {
   config?: MaterielCanvasItem;
   id: string;
   index?: number;
+}
+
+export interface BaseEChartsProps {
+  id: string;
+  config?: MaterielCanvasItem;
 }
 
 export interface PackageConfig {

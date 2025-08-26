@@ -164,7 +164,7 @@ const CommonPanel: FC<CommonPanelProps> = memo(
     ]);
     return (
       <div className="w-full h-full">
-        <Title id={id} />
+        <Title id={id} config={config} />
         <Collapse items={items} bordered={false} defaultActiveKey={defaultActiveKey} />
         {children}
       </div>

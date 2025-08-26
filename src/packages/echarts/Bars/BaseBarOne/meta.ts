@@ -6,7 +6,7 @@ export default {
   title: '基础柱状图',
   image,
   type: '柱状图',
-  componentName: 'BaseBarOne',
-  panel: 'BaseBarOnePanel',
+  componentName: 'BaseECharts',
+  panel: 'CommonPanel',
   option: defaultOption,
 };
