@@ -18,6 +18,7 @@ import type { Rect, CanvasBounds } from '@/utils/rect';
 import useComponent from '@/hooks/useComponent';
 import { cloneDeep } from 'lodash-es';
 import useWheelZoomOrScroll from './hooks/useWheelZoomOrScroll';
+import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { defaultEvent } from '../setting/selectedPanel/event/config';
 
 const Canvas: React.FC = memo(() => {
@@ -82,6 +83,9 @@ const Canvas: React.FC = memo(() => {
     minScale: 10,
     maxScale: 200,
   });
+
+  // 键盘快捷键：复制/粘贴/删除 选中组件
+  useKeyboardShortcuts();
 
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [scrollTop, setScrollTop] = useState<number>(0);
@@ -154,6 +158,7 @@ const Canvas: React.FC = memo(() => {
     useMoveableHandlers({
       canvasRef,
       selectedId,
+      selectedItem,
       canvasWidth: width,
       canvasHeight: height,
       unit,
@@ -251,28 +256,30 @@ const Canvas: React.FC = memo(() => {
             <ChartWrap {...item} key={item.id} />
           ))}
 
-          <Moveable
-            ref={moveableRef}
-            target={targetElement}
-            className={styles.moveableTheme}
-            container={canvasRef.current}
-            origin={false}
-            edge={false}
-            draggable
-            resizable
-            rotatable={false}
-            keepRatio={false}
-            renderDirections={['nw', 'ne', 'sw', 'se', 'n', 'w', 's', 'e']}
-            snappable
-            snapGridWidth={unit}
-            snapGridHeight={unit}
-            snapThreshold={6}
-            elementGuidelines={elementGuidelines}
-            onDrag={onDrag}
-            onDragEnd={onDragEnd}
-            onResize={onResize}
-            onResizeEnd={onResizeEnd}
-          />
+          {targetElement ? (
+            <Moveable
+              ref={moveableRef}
+              target={targetElement}
+              className={styles.moveableTheme}
+              container={canvasRef.current}
+              origin={false}
+              edge={false}
+              draggable={selectedItem?.isLocked ? false : true}
+              resizable={selectedItem?.isLocked ? false : true}
+              rotatable={false}
+              keepRatio={false}
+              renderDirections={['nw', 'ne', 'sw', 'se', 'n', 'w', 's', 'e']}
+              snappable
+              snapGridWidth={unit}
+              snapGridHeight={unit}
+              snapThreshold={6}
+              elementGuidelines={elementGuidelines}
+              onDrag={onDrag}
+              onDragEnd={onDragEnd}
+              onResize={onResize}
+              onResizeEnd={onResizeEnd}
+            />
+          ) : null}
         </div>
       </InfiniteViewer>
       <Footer handleScaleChange={handleScaleChange} />

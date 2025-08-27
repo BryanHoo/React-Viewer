@@ -34,6 +34,8 @@ export interface MaterielCanvasItem extends MaterielItem {
   width: number;
   height: number;
   zIndex?: number;
+  isLocked?: boolean;
+  isVisible?: boolean;
 }
 
 export interface PanelProps {

@@ -6,6 +6,7 @@ import { isResizeEvent } from '../../../utils/moveable';
 interface UseMoveableHandlersParams {
   canvasRef: React.RefObject<HTMLDivElement>;
   selectedId?: string;
+  selectedItem?: { isVisible?: boolean };
   canvasWidth: number;
   canvasHeight: number;
   unit: number; // kept for future extensibility; not used directly now
@@ -31,6 +32,7 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
   const {
     canvasRef,
     selectedId,
+    selectedItem,
     canvasWidth,
     canvasHeight,
     // unit (reserved for future usage)
@@ -57,9 +59,22 @@ function useMoveableHandlers(params: UseMoveableHandlersParams): UseMoveableHand
 
   const targetElement = useMemo<HTMLElement | null>(() => {
     if (!canvasRef.current || !selectedId) return null;
+
+    // 检查组件是否隐藏
+    if (selectedItem?.isVisible === false) {
+      return null;
+    }
+
     const childList = Array.from(canvasRef.current.querySelectorAll<HTMLElement>('[data-id]'));
-    return childList.find((el) => el.dataset.id === selectedId) || null;
-  }, [canvasRef, selectedId]);
+    const element = childList.find((el) => el.dataset.id === selectedId);
+
+    // 检查元素是否隐藏
+    if (element && getComputedStyle(element).display === 'none') {
+      return null;
+    }
+
+    return element || null;
+  }, [canvasRef, selectedId, selectedItem?.isVisible]);
 
   const elementGuidelines = useMemo<HTMLElement[]>(() => {
     if (!canvasRef.current) return [];

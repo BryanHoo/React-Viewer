@@ -25,12 +25,16 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
     paddingRight,
     paddingBottom,
     paddingLeft,
+    zIndex,
+    isLocked,
+    isVisible,
   } = rest;
   const Component = packages.components[componentName];
   const setSelectedId = useCanvasStore(useShallow((state) => state.setSelectedId));
 
   const handleSelect = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    if (isLocked) return;
     setSelectedId(id);
   });
 
@@ -47,6 +51,9 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
         paddingBottom,
         paddingLeft,
         boxSizing: 'border-box',
+        zIndex,
+        display: isVisible === false ? 'none' : undefined,
+        pointerEvents: isLocked ? 'none' : undefined,
         ...style,
       }}
       data-id={id}
