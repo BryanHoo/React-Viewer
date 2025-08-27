@@ -5,6 +5,7 @@ import Customize from './customize';
 import SelectedPanelData from './data';
 import Animation from './animation';
 import type { PanelProps } from '@/types/materielType';
+import Event from './event';
 
 const options = ['定制', '动画', '数据', '事件'];
 
@@ -16,6 +17,7 @@ const SelectedPanel: FC<PanelProps> = memo((props) => {
     if (activeTab === '定制') return <Customize config={config} id={id} />;
     if (activeTab === '动画') return <Animation config={config} id={id} />;
     if (activeTab === '数据') return <SelectedPanelData config={config} id={id} />;
+    if (activeTab === '事件') return <Event config={config} id={id} />;
   }, [activeTab, config, id]);
 
   return (

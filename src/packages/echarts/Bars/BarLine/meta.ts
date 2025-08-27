@@ -3,7 +3,7 @@ import { defaultOption } from './config';
 
 export default {
   id: 'BarLine',
-  title: '柱状折线图',
+  title: '柱状图 & 折线图',
   image,
   type: '柱状图',
   componentName: 'BaseECharts',

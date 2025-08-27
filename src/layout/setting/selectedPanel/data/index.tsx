@@ -38,7 +38,6 @@ const SelectedPanelData: FC<PanelProps> = memo((props) => {
   );
 
   useEffect(() => {
-    console.log('🚀 ~ config:', config);
     if (!config) return;
     form.setFieldsValue({
       apiType: config?.apiType ?? 'static',

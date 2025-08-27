@@ -1,5 +1,15 @@
 import type { EChartsOption } from 'echarts';
 import type { ComponentType } from 'react';
+
+export type EventKey =
+  | 'click'
+  | 'dblclick'
+  | 'mousedown'
+  | 'mousemove'
+  | 'mouseup'
+  | 'mouseover'
+  | 'mouseout';
+
 export interface MaterielItem {
   id: string;
   title: string;
@@ -15,6 +25,7 @@ export interface MaterielItem {
   paddingRight?: string;
   apiType?: 'static' | 'public';
   animation?: string;
+  event?: Record<EventKey, string>;
 }
 
 export interface MaterielCanvasItem extends MaterielItem {

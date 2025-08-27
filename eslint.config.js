@@ -29,6 +29,9 @@ export default tseslint.config([
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
+      'no-implied-eval': 'off',
+      '@typescript-eslint/no-implied-eval': 'warn',
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
     },
   },
   // 放到最后，关闭与 Prettier 冲突的样式规则

@@ -18,6 +18,7 @@ import type { Rect, CanvasBounds } from '@/utils/rect';
 import useComponent from '@/hooks/useComponent';
 import { cloneDeep } from 'lodash-es';
 import useWheelZoomOrScroll from './hooks/useWheelZoomOrScroll';
+import { defaultEvent } from '../setting/selectedPanel/event/config';
 
 const Canvas: React.FC = memo(() => {
   const {
@@ -131,6 +132,7 @@ const Canvas: React.FC = memo(() => {
         left: clamped.left,
         width: clamped.width,
         height: clamped.height,
+        event: defaultEvent,
       });
       setTimeout(() => {
         setSelectedId(newId);

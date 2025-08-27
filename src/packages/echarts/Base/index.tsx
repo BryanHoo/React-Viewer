@@ -22,10 +22,21 @@ const BaseECharts: FC<BaseEChartsProps> = memo((props) => {
   const className = useMemo(() => {
     if (!config?.animation) return '';
     return classNames({
-      animate__animated: !!config?.animation,
+      animate__animated: true,
       [config?.animation]: true,
     });
   }, [config?.animation]);
+
+  // const onEvents = useMemo(() => {
+  //   return Object.entries(config?.event ?? {}).reduce(
+  //     (acc, [key, value]) => {
+  //       acc[key] = (params: unknown, chart: unknown) => {
+  //       };
+  //       return acc;
+  //     },
+  //     {} as Record<string, (params: any, chart: any) => void>,
+  //   );
+  // }, [config?.event]);
 
   return (
     <ECharts
@@ -33,6 +44,7 @@ const BaseECharts: FC<BaseEChartsProps> = memo((props) => {
       className={className}
       renderer={renderer}
       theme={themeColor}
+      // onEvents={onEvents}
     />
   );
 });
