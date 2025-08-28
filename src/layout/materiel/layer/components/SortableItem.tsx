@@ -35,7 +35,7 @@ const SortableItem = memo((props: SortableItemProps) => {
   // 2. 优化 className 计算，使用 useMemo 缓存
   const containerClassName = useMemo(() => {
     return classNames(
-      'flex items-center gap-[8px] p-[8px] rounded-md cursor-grab active:cursor-grabbing select-none border-1',
+      'flex items-center gap-[8px] p-[8px] rounded-md cursor-grab active:cursor-grabbing select-none border-1 mb-[4px]',
       isActive ? 'bg-[rgba(81,214,169,0.2)]' : 'hover:bg-[rgba(255,255,255,0.06)]',
       isActive ? 'border-[var(--n-primary-color)]' : 'border-transparent',
     );

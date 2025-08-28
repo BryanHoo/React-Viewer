@@ -1,0 +1,106 @@
+import { create } from 'zustand';
+import type { MaterielCanvasItem } from '@/types/materielType';
+import { cloneDeep } from 'lodash-es';
+
+export type HistoryAction = 'init' | 'add' | 'delete' | 'move' | 'resize' | 'update' | 'reorder';
+
+export interface HistorySnapshotMeta {
+  action: HistoryAction;
+  label: string;
+  componentId?: string;
+}
+
+export interface HistorySnapshot extends HistorySnapshotMeta {
+  id: string;
+  timestamp: number;
+  componentSnapshotMap: Map<string, MaterielCanvasItem>;
+}
+
+function cloneComponentMap(
+  source: Map<string, MaterielCanvasItem>,
+): Map<string, MaterielCanvasItem> {
+  const next = new Map<string, MaterielCanvasItem>();
+  source.forEach((value, key) => {
+    next.set(key, { ...value, option: cloneDeep(value.option) } as unknown as MaterielCanvasItem);
+  });
+  return next;
+}
+
+function createSnapshot(
+  map: Map<string, MaterielCanvasItem>,
+  meta: HistorySnapshotMeta,
+): HistorySnapshot {
+  return {
+    id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    timestamp: Date.now(),
+    componentSnapshotMap: cloneComponentMap(map),
+    ...meta,
+  };
+}
+
+export interface HistoryState {
+  histories: HistorySnapshot[];
+  historyIndex: number;
+}
+
+export interface HistoryActions {
+  commit: (map: Map<string, MaterielCanvasItem>, meta: HistorySnapshotMeta) => void;
+  undo: (apply: (map: Map<string, MaterielCanvasItem>) => void) => void;
+  redo: (apply: (map: Map<string, MaterielCanvasItem>) => void) => void;
+  goto: (index: number, apply: (map: Map<string, MaterielCanvasItem>) => void) => void;
+  reset: () => void;
+}
+
+export const useHistoryStore = create<HistoryState & HistoryActions>()((set, get) => ({
+  histories: [
+    // 最新在上：初始化时只有一条初始化记录
+    createSnapshot(new Map<string, MaterielCanvasItem>(), { action: 'init', label: '画布初始化' }),
+  ],
+  // 当前指针，指向 histories 中的当前状态；最新为 0，越大越旧
+  historyIndex: 0,
+  commit: (map, meta) =>
+    set((state) => {
+      const snap = createSnapshot(map, meta);
+      // 丢弃“未来”记录：最新在上时，0..historyIndex-1 都是未来
+      const remain = state.histories.slice(state.historyIndex);
+      return {
+        histories: [snap, ...remain],
+        historyIndex: 0,
+      } as Pick<HistoryState, 'histories' | 'historyIndex'>;
+    }),
+  undo: (apply) => {
+    const { historyIndex, histories } = get();
+    // 最新在上：向“更旧”撤回 -> index + 1
+    if (historyIndex >= histories.length - 1) return;
+    const newIndex = historyIndex + 1;
+    const snap = histories[newIndex];
+    apply(cloneComponentMap(snap.componentSnapshotMap));
+    set({ historyIndex: newIndex });
+  },
+  redo: (apply) => {
+    const { historyIndex, histories } = get();
+    // 恢复到“更新”的记录 -> index - 1
+    if (historyIndex <= 0) return;
+    const newIndex = historyIndex - 1;
+    const snap = histories[newIndex];
+    apply(cloneComponentMap(snap.componentSnapshotMap));
+    set({ historyIndex: newIndex });
+  },
+  goto: (index, apply) => {
+    const { histories } = get();
+    if (index < 0 || index >= histories.length) return;
+    const snap = histories[index];
+    apply(cloneComponentMap(snap.componentSnapshotMap));
+    set({ historyIndex: index });
+  },
+  reset: () =>
+    set({
+      histories: [
+        createSnapshot(new Map<string, MaterielCanvasItem>(), {
+          action: 'init',
+          label: '画布初始化',
+        }),
+      ],
+      historyIndex: 0,
+    }),
+}));

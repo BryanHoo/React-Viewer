@@ -5,6 +5,7 @@ import { Lock, Unlock } from '@icon-park/react';
 import { useGlobalStore } from '@/store/globalStore';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn } from 'ahooks';
+import HistoryPopover from './components/HistoryPopover';
 
 interface FooterProps {
   handleScaleChange: () => void;
@@ -42,7 +43,7 @@ const Footer: FC<FooterProps> = memo(({ handleScaleChange: handleScaleChangeProp
         'flex items-center justify-between flex-nowrap px-[10px]',
       )}
     >
-      <Button type="text">历史记录</Button>
+      <HistoryPopover placement="top" />
       <div className="flex items-center justify-between flex-nowrap gap-[10px] pr-[10px]">
         <Button
           icon={scaleLock ? <Lock theme="outline" /> : <Unlock theme="outline" />}
