@@ -2,10 +2,10 @@ import ECharts from '@/components/ECharts';
 import { memo, useMemo, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
-import type { BaseEChartsProps } from '@/types/materielType';
+
 import classNames from '@/utils/classname';
 
-const BaseECharts: FC<BaseEChartsProps> = memo((props) => {
+const CommonRenderer: FC<AppBaseEChartsProps> = memo((props) => {
   const { config } = props;
   const { echartsRenderer, themeColor } = useGlobalStore(
     useShallow((state) => ({
@@ -49,6 +49,6 @@ const BaseECharts: FC<BaseEChartsProps> = memo((props) => {
   );
 });
 
-BaseECharts.displayName = 'BaseECharts';
+CommonRenderer.displayName = 'CommonRenderer';
 
-export default BaseECharts;
+export default CommonRenderer;

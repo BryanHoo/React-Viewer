@@ -1,41 +1,13 @@
 import { create } from 'zustand';
-import type { MaterielCanvasItem } from '@/types/materielType';
-import { cloneDeep } from 'lodash-es';
 
-export type HistoryAction = 'init' | 'add' | 'delete' | 'move' | 'resize' | 'update' | 'reorder';
+import { cloneComponentMap, createSnapshot } from '@/utils';
 
-export interface HistorySnapshotMeta {
-  action: HistoryAction;
-  label: string;
-  componentId?: string;
-}
+export type HistoryAction = AppHistoryAction;
 
-export interface HistorySnapshot extends HistorySnapshotMeta {
+export interface HistorySnapshot extends AppHistorySnapshotMeta {
   id: string;
   timestamp: number;
-  componentSnapshotMap: Map<string, MaterielCanvasItem>;
-}
-
-function cloneComponentMap(
-  source: Map<string, MaterielCanvasItem>,
-): Map<string, MaterielCanvasItem> {
-  const next = new Map<string, MaterielCanvasItem>();
-  source.forEach((value, key) => {
-    next.set(key, { ...value, option: cloneDeep(value.option) } as unknown as MaterielCanvasItem);
-  });
-  return next;
-}
-
-function createSnapshot(
-  map: Map<string, MaterielCanvasItem>,
-  meta: HistorySnapshotMeta,
-): HistorySnapshot {
-  return {
-    id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    timestamp: Date.now(),
-    componentSnapshotMap: cloneComponentMap(map),
-    ...meta,
-  };
+  componentSnapshotMap: Map<string, AppMaterielCanvasItem>;
 }
 
 export interface HistoryState {
@@ -44,17 +16,20 @@ export interface HistoryState {
 }
 
 export interface HistoryActions {
-  commit: (map: Map<string, MaterielCanvasItem>, meta: HistorySnapshotMeta) => void;
-  undo: (apply: (map: Map<string, MaterielCanvasItem>) => void) => void;
-  redo: (apply: (map: Map<string, MaterielCanvasItem>) => void) => void;
-  goto: (index: number, apply: (map: Map<string, MaterielCanvasItem>) => void) => void;
+  commit: (map: Map<string, AppMaterielCanvasItem>, meta: AppHistorySnapshotMeta) => void;
+  undo: (apply: (map: Map<string, AppMaterielCanvasItem>) => void) => void;
+  redo: (apply: (map: Map<string, AppMaterielCanvasItem>) => void) => void;
+  goto: (index: number, apply: (map: Map<string, AppMaterielCanvasItem>) => void) => void;
   reset: () => void;
 }
 
 export const useHistoryStore = create<HistoryState & HistoryActions>()((set, get) => ({
   histories: [
     // 最新在上：初始化时只有一条初始化记录
-    createSnapshot(new Map<string, MaterielCanvasItem>(), { action: 'init', label: '画布初始化' }),
+    createSnapshot(new Map<string, AppMaterielCanvasItem>(), {
+      action: 'init',
+      label: '画布初始化',
+    }),
   ],
   // 当前指针，指向 histories 中的当前状态；最新为 0，越大越旧
   historyIndex: 0,
@@ -96,7 +71,7 @@ export const useHistoryStore = create<HistoryState & HistoryActions>()((set, get
   reset: () =>
     set({
       histories: [
-        createSnapshot(new Map<string, MaterielCanvasItem>(), {
+        createSnapshot(new Map<string, AppMaterielCanvasItem>(), {
           action: 'init',
           label: '画布初始化',
         }),

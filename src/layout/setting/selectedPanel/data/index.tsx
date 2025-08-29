@@ -4,7 +4,6 @@ import JsonFormEditor from '@/components/JsonFormEditor';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useDebounceFn } from 'ahooks';
 import { useShallow } from 'zustand/shallow';
-import type { PanelProps } from '@/types/materielType';
 
 const restrict = ({ key }: any) => {
   return key === 'dimensions' || key === 'source' || key === 'root';
@@ -28,7 +27,7 @@ const defaultValue = ({ key }: any) => {
   return key === 'source' ? {} : null;
 };
 
-const SelectedPanelData: FC<PanelProps> = memo((props) => {
+const SelectedPanelData: FC<AppPanelProps> = memo((props) => {
   const { config, id } = props;
   const [form] = Form.useForm();
   const { updateComponentById } = useCanvasStore(

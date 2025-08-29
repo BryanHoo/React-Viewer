@@ -2,7 +2,7 @@ import FormRow from '@/components/FormRow';
 import { Form, InputNumber } from 'antd';
 import type { FC } from 'react';
 import { memo, useEffect, useMemo } from 'react';
-import type { PanelProps } from '@/types/materielType';
+
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { merge } from 'lodash-es';
@@ -22,7 +22,7 @@ interface BarSeriesFormValues {
   };
 }
 
-const Bar: FC<PanelProps> = memo((props) => {
+const Bar: FC<AppPanelProps> = memo((props) => {
   const { id, index } = props;
   const [form] = Form.useForm<BarSeriesFormValues>();
 

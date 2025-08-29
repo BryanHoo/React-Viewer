@@ -1,5 +1,3 @@
-import type { MaterielItem } from '@/types/materielType';
-
 export interface Rect {
   left: number;
   top: number;
@@ -85,7 +83,7 @@ export function clampRectToCanvas(
   return computeNextRectWithinCanvas(rect, {}, canvas, minSize);
 }
 
-export function isMaterielItem(value: unknown): value is MaterielItem {
+export function isMaterielItem(value: unknown): value is AppMaterielItem {
   if (typeof value !== 'object' || value === null) return false;
   const obj = value as Record<string, unknown>;
   return (

@@ -1,5 +1,5 @@
 import CodeMirrorForm from '@/components/CodeMirrorForm';
-import type { PanelProps } from '@/types/materielType';
+
 import { Collapse, Form } from 'antd';
 import { memo, useEffect, useMemo, type FC } from 'react';
 import { eventConfig } from './config';
@@ -7,7 +7,7 @@ import { useMemoizedFn } from 'ahooks';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 
-const Event: FC<PanelProps> = memo((props) => {
+const Event: FC<AppPanelProps> = memo((props) => {
   const { config, id } = props;
   const { updateComponentById } = useCanvasStore(
     useShallow((state) => ({

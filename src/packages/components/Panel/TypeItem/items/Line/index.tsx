@@ -1,5 +1,5 @@
 import FormRow from '@/components/FormRow';
-import type { PanelProps } from '@/types/materielType';
+
 import { Form, InputNumber, Select, Switch } from 'antd';
 import { memo, type FC, useEffect, useMemo } from 'react';
 import { useCanvasStore } from '@/store/canvasStore';
@@ -24,7 +24,7 @@ interface LineSeriesFormValues {
   };
 }
 
-const Line: FC<PanelProps> = memo((props) => {
+const Line: FC<AppPanelProps> = memo((props) => {
   const { id, index } = props;
   const [form] = Form.useForm<LineSeriesFormValues>();
 

@@ -6,7 +6,7 @@ export default {
   title: '柱状图 & 折线图',
   image,
   type: '柱状图',
-  componentName: 'BaseECharts',
+  componentName: 'CommonRenderer',
   panel: 'CommonPanel',
   option: defaultOption,
 };

@@ -1,19 +1,18 @@
 import { memo, type FC, useState } from 'react';
 import classNames from '@/utils/classname';
-import type { MaterielCanvasItem } from '@/types/materielType';
 import { useCanvasStore } from '@/store/canvasStore';
-import packages from '@/packages';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn } from 'ahooks';
 import { Popover } from 'antd';
 import ContextMenu from './ContextMenu';
+import packages from '@/packages';
 
-interface ChartWrapProps extends MaterielCanvasItem {
+interface CanvasItemFrameProps extends AppMaterielCanvasItem {
   className?: string;
   style?: React.CSSProperties;
 }
 
-const ChartWrap: FC<ChartWrapProps> = memo((props) => {
+const CanvasItemFrame: FC<CanvasItemFrameProps> = memo((props) => {
   const { style, className, ...rest } = props;
   const {
     top,
@@ -31,13 +30,13 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
     isLocked,
     isVisible,
   } = rest;
-  const Component = packages.components[componentName];
   const { setSelectedId, selectedId } = useCanvasStore(
     useShallow((state) => ({
       setSelectedId: state.setSelectedId,
       selectedId: state.selectedId,
     })),
   );
+  const Component = packages.components[componentName];
 
   const [isContextOpen, setIsContextOpen] = useState<boolean>(false);
 
@@ -98,6 +97,6 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
   );
 });
 
-ChartWrap.displayName = 'ChartWrap';
+CanvasItemFrame.displayName = 'CanvasItemFrame';
 
-export default ChartWrap;
+export default CanvasItemFrame;

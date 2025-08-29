@@ -3,8 +3,7 @@ import { memo, useEffect, useState, type FC } from 'react';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn } from 'ahooks';
-import { normalize, toCss, inferUnitFromValue, type CssUnit } from '@/utils';
-import type { MaterielCanvasItem, PanelProps } from '@/types/materielType';
+import { normalize, toCss, inferUnitFromValue } from '@/utils';
 import FormRow from '@/components/FormRow';
 
 interface ContainerFormValues {
@@ -16,7 +15,7 @@ interface ContainerFormValues {
 
 type PaddingKey = 'paddingTop' | 'paddingBottom' | 'paddingLeft' | 'paddingRight';
 
-const Container: FC<PanelProps> = memo((props) => {
+const Container: FC<AppPanelProps> = memo((props) => {
   const { config, id } = props;
   const [form] = Form.useForm<ContainerFormValues>();
   const { updateComponentById } = useCanvasStore(
@@ -25,7 +24,7 @@ const Container: FC<PanelProps> = memo((props) => {
     })),
   );
 
-  const [unitMap, setUnitMap] = useState<Record<PaddingKey, CssUnit>>({
+  const [unitMap, setUnitMap] = useState<Record<PaddingKey, AppCssUnit>>({
     paddingTop: 'px',
     paddingRight: 'px',
     paddingBottom: 'px',
@@ -56,7 +55,7 @@ const Container: FC<PanelProps> = memo((props) => {
     (_: Partial<ContainerFormValues>, all: ContainerFormValues) => {
       if (!id) return;
 
-      const next: Partial<MaterielCanvasItem> = {};
+      const next: Partial<AppMaterielCanvasItem> = {};
       const top = toCss(normalize(all.paddingTop), unitMap.paddingTop);
       const right = toCss(normalize(all.paddingRight), unitMap.paddingRight);
       const bottom = toCss(normalize(all.paddingBottom), unitMap.paddingBottom);
@@ -71,7 +70,7 @@ const Container: FC<PanelProps> = memo((props) => {
     },
   );
 
-  const handleUnitChange = useMemoizedFn((nextUnit: CssUnit, key: PaddingKey) => {
+  const handleUnitChange = useMemoizedFn((nextUnit: AppCssUnit, key: PaddingKey) => {
     if (!id) return;
     setUnitMap((prev) => ({ ...prev, [key]: nextUnit }));
     const value = form.getFieldValue(key) as number | undefined;
@@ -84,7 +83,7 @@ const Container: FC<PanelProps> = memo((props) => {
     return (
       <Select
         value={unitMap[key]}
-        onChange={(value) => handleUnitChange(value as CssUnit, key)}
+        onChange={(value) => handleUnitChange(value as AppCssUnit, key)}
         style={{ width: 50 }}
         options={[
           { label: 'px', value: 'px' },

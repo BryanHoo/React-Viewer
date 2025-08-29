@@ -8,13 +8,12 @@ import { memo, useMemo, type FC } from 'react';
 import { useMemoizedFn } from 'ahooks';
 import { useShallow } from 'zustand/shallow';
 import { readShowFlag, updateOptionShowFlag } from '@/utils/chart';
-import type { OptionKey, PanelProps } from '@/types/materielType';
 import Title from '../Title';
 import { isArray } from 'lodash-es';
 import TypeItem from '../TypeItem';
 import { typeItemConfig } from '../TypeItem/config';
 
-interface CommonPanelProps extends PanelProps {
+interface CommonPanelProps extends AppPanelProps {
   children?: React.ReactNode;
   // 默认项启用的面板
   defaultItems?: string[];
@@ -32,7 +31,7 @@ const CommonPanel: FC<CommonPanelProps> = memo(
       })),
     );
 
-    const handleToggleShow = useMemoizedFn((key: OptionKey, checked: boolean) => {
+    const handleToggleShow = useMemoizedFn((key: AppOptionKey, checked: boolean) => {
       if (!id) return;
       const prevOption = config?.option ?? {};
       const nextOption = updateOptionShowFlag(prevOption, key, checked);

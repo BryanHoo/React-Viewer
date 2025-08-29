@@ -4,16 +4,16 @@ import { useMemoizedFn } from 'ahooks';
 import { Form, InputNumber, Select } from 'antd';
 import { memo, useEffect, useState, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { inferUnitFromValue, toEchartsLength, type CssUnit } from '@/utils';
+import { inferUnitFromValue, toEchartsLength } from '@/utils';
 import type { LegendOption } from 'echarts/types/src/component/legend/LegendModel.js';
 import FormRow from '@/components/FormRow';
-import type { PanelProps } from '@/types/materielType';
+
 import CustomColorPicker from '@/components/CustomColorPicker';
 
-const Legend: FC<PanelProps> = memo((props) => {
+const Legend: FC<AppPanelProps> = memo((props) => {
   const { config, id } = props;
   const [form] = Form.useForm<LegendOption>();
-  const [unitMap, setUnitMap] = useState<Record<'width' | 'height', CssUnit>>({
+  const [unitMap, setUnitMap] = useState<Record<'width' | 'height', AppCssUnit>>({
     width: 'px',
     height: 'px',
   });
@@ -93,7 +93,7 @@ const Legend: FC<PanelProps> = memo((props) => {
     return (
       <Select
         value={unitMap[key]}
-        onChange={(value) => handleUnitChange(value as CssUnit, key)}
+        onChange={(value) => handleUnitChange(value as AppCssUnit, key)}
         style={{ width: 50 }}
         options={[
           { label: 'px', value: 'px' },
@@ -107,7 +107,7 @@ const Legend: FC<PanelProps> = memo((props) => {
     writeLegendToStore(allValues);
   });
 
-  const handleUnitChange = useMemoizedFn((nextUnit: CssUnit, key: 'width' | 'height') => {
+  const handleUnitChange = useMemoizedFn((nextUnit: AppCssUnit, key: 'width' | 'height') => {
     setUnitMap((prev) => ({ ...prev, [key]: nextUnit }));
     const value = form.getFieldValue(key) as number | undefined;
     if (value === undefined) return;

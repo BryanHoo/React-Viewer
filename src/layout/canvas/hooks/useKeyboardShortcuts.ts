@@ -5,7 +5,7 @@ import { useGlobalStore } from '@/store/globalStore';
 import { useShallow } from 'zustand/shallow';
 import { cloneDeep } from 'lodash-es';
 import { generateId } from '@/utils';
-import type { MaterielCanvasItem } from '@/types/materielType';
+
 import { computeNextRectWithinCanvas } from '@/utils/rect';
 
 function isFormEditingTarget(target: EventTarget | null): boolean {
@@ -38,14 +38,17 @@ export default function useKeyboardShortcuts(): void {
       })),
     );
 
-  const clipboardRef = useRef<MaterielCanvasItem | null>(null);
+  const clipboardRef = useRef<AppMaterielCanvasItem | null>(null);
 
   const handleCopy = useMemoizedFn((e: KeyboardEvent) => {
     if (isFormEditingTarget(e.target)) return;
     if (!selectedId) return;
     const current = componentMap.get(selectedId);
     if (!current) return;
-    clipboardRef.current = { ...current, option: cloneDeep(current.option) } as MaterielCanvasItem;
+    clipboardRef.current = {
+      ...current,
+      option: cloneDeep(current.option),
+    } as AppMaterielCanvasItem;
   });
 
   const handlePaste = useMemoizedFn((e: KeyboardEvent) => {
@@ -63,7 +66,7 @@ export default function useKeyboardShortcuts(): void {
     );
 
     const newId = generateId(template.id);
-    const nextItem: MaterielCanvasItem = {
+    const nextItem: AppMaterielCanvasItem = {
       ...template,
       id: newId,
       left: computed.left,
@@ -72,7 +75,7 @@ export default function useKeyboardShortcuts(): void {
       height: computed.height,
       option: cloneDeep(template.option),
       isVisible: true,
-    } as MaterielCanvasItem;
+    } as AppMaterielCanvasItem;
 
     addComponent(nextItem);
     // 等待下一帧渲染出新 DOM 再设置选中，避免目标元素未挂载

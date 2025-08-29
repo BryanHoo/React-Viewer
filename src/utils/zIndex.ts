@@ -1,13 +1,13 @@
-import type { MaterielCanvasItem } from '@/types/materielType';
-
-export function getIdsOrderedByZIndexDesc(componentMap: Map<string, MaterielCanvasItem>): string[] {
+export function getIdsOrderedByZIndexDesc(
+  componentMap: Map<string, AppMaterielCanvasItem>,
+): string[] {
   return [...componentMap.entries()]
     .sort((a, b) => (b[1].zIndex ?? 0) - (a[1].zIndex ?? 0))
     .map(([id]) => id);
 }
 
 export function buildOrderAfterSendToBack(
-  componentMap: Map<string, MaterielCanvasItem>,
+  componentMap: Map<string, AppMaterielCanvasItem>,
   targetId: string,
 ): string[] {
   const ordered = getIdsOrderedByZIndexDesc(componentMap).filter((id) => id !== targetId);
@@ -16,7 +16,7 @@ export function buildOrderAfterSendToBack(
 }
 
 export function buildOrderAfterMoveUp(
-  componentMap: Map<string, MaterielCanvasItem>,
+  componentMap: Map<string, AppMaterielCanvasItem>,
   targetId: string,
 ): string[] {
   const ordered = getIdsOrderedByZIndexDesc(componentMap);
@@ -27,7 +27,7 @@ export function buildOrderAfterMoveUp(
 }
 
 export function buildOrderAfterMoveDown(
-  componentMap: Map<string, MaterielCanvasItem>,
+  componentMap: Map<string, AppMaterielCanvasItem>,
   targetId: string,
 ): string[] {
   const ordered = getIdsOrderedByZIndexDesc(componentMap);
@@ -37,7 +37,7 @@ export function buildOrderAfterMoveDown(
   return ordered;
 }
 
-export function getHighestZIndex(map: Map<string, MaterielCanvasItem>): number {
+export function getHighestZIndex(map: Map<string, AppMaterielCanvasItem>): number {
   let max = 0;
   map.forEach((item) => {
     const z = item.zIndex ?? 0;

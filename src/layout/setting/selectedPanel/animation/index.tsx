@@ -1,11 +1,11 @@
 import { memo, type FC, useMemo } from 'react';
-import type { PanelProps } from '@/types/materielType';
+
 import { Button, Collapse } from 'antd';
 import { useMemoizedFn } from 'ahooks';
 import { useCanvasStore } from '@/store/canvasStore';
 import { animationGroups } from './config';
 
-const Animation: FC<PanelProps> = memo((props) => {
+const Animation: FC<AppPanelProps> = memo((props) => {
   const { id, config } = props;
   const { updateComponentById } = useCanvasStore();
 

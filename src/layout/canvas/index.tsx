@@ -9,10 +9,9 @@ import { useGlobalStore } from '@/store/globalStore';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { generateId } from '@/utils';
-import ChartWrap from './components/ChartWrap';
 import Moveable from 'react-moveable';
 import useMoveableHandlers from './hooks/useMoveableHandlers';
-import type { MaterielItem } from '@/types/materielType';
+
 import { clampRectToCanvas, isMaterielItem } from '@/utils/rect';
 import type { Rect } from '@/utils/rect';
 import useComponent from '@/hooks/useComponent';
@@ -21,6 +20,7 @@ import useWheelZoomOrScroll from './hooks/useWheelZoomOrScroll';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { defaultEvent } from '../setting/selectedPanel/event/config';
 import CanvasContextMenu from './components/CanvasContextMenu';
+import CanvasItemFrame from './components/CanvasItemFrame';
 
 const Canvas: React.FC = memo(() => {
   const {
@@ -92,10 +92,22 @@ const Canvas: React.FC = memo(() => {
 
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [scrollTop, setScrollTop] = useState<number>(0);
+  const [horizontalGuides, setHorizontalGuides] = useState<number[]>([]);
+  const [verticalGuides, setVerticalGuides] = useState<number[]>([]);
 
   const handleScroll = useMemoizedFn((e: { scrollLeft: number; scrollTop: number }) => {
     setScrollLeft(e.scrollLeft);
     setScrollTop(e.scrollTop);
+  });
+
+  const handleHorizontalGuidesChange = useMemoizedFn((e: { guides: number[] }) => {
+    setHorizontalGuides(e.guides);
+    moveableRef.current?.updateRect?.();
+  });
+
+  const handleVerticalGuidesChange = useMemoizedFn((e: { guides: number[] }) => {
+    setVerticalGuides(e.guides);
+    moveableRef.current?.updateRect?.();
   });
 
   const handleScaleChange = useMemoizedFn(() => {
@@ -123,7 +135,7 @@ const Canvas: React.FC = memo(() => {
       );
 
       const raw = e.dataTransfer.getData('materielConfig');
-      let materielConfig: MaterielItem;
+      let materielConfig: AppMaterielItem;
       try {
         const parsed = JSON.parse(raw);
         if (!isMaterielItem(parsed)) return;
@@ -248,6 +260,7 @@ const Canvas: React.FC = memo(() => {
           dragGuideStyle={{ backgroundColor: '#51d6a9' }}
           displayGuidePos={false}
           displayDragPos={false}
+          onChangeGuides={handleHorizontalGuidesChange}
         />
       </div>
       <div className="absolute top-0 left-0 w-[20px] h-full z-1">
@@ -265,6 +278,7 @@ const Canvas: React.FC = memo(() => {
           dragGuideStyle={{ backgroundColor: '#51d6a9' }}
           displayGuidePos={false}
           displayDragPos={false}
+          onChangeGuides={handleVerticalGuidesChange}
         />
       </div>
       <InfiniteViewer
@@ -300,7 +314,7 @@ const Canvas: React.FC = memo(() => {
           onContextMenu={handleCanvasContextMenu}
         >
           {componentList.map((item) => (
-            <ChartWrap {...item} key={item.id} />
+            <CanvasItemFrame {...item} key={item.id} />
           ))}
 
           {targetSelector ? (
@@ -324,6 +338,8 @@ const Canvas: React.FC = memo(() => {
               snapGridHeight={unit}
               snapThreshold={6}
               elementGuidelines={elementGuidelines}
+              horizontalGuidelines={horizontalGuides}
+              verticalGuidelines={verticalGuides}
               onDrag={onDrag}
               onDragEnd={onDragEnd}
               onResize={onResize}

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import type { MaterielCanvasItem } from '@/types/materielType';
 import { useGlobalStore } from '@/store/globalStore';
 import { computeNextRectWithinCanvas } from '@/utils/rect';
 import { useHistoryStore } from '@/store/historyStore';
@@ -9,14 +8,14 @@ import { generateId, getHighestZIndex } from '@/utils';
 import { buildOrderAfterSendToBack, buildOrderAfterMoveDown, buildOrderAfterMoveUp } from '@/utils';
 
 export interface CanvasComponentState {
-  componentMap: Map<string, MaterielCanvasItem>;
+  componentMap: Map<string, AppMaterielCanvasItem>;
   selectedId?: string;
-  clipboard?: MaterielCanvasItem;
+  clipboard?: AppMaterielCanvasItem;
 }
 
 export interface CanvasComponentActions {
-  setComponentMap: (componentMap: Map<string, MaterielCanvasItem>) => void;
-  addComponent: (component: MaterielCanvasItem) => void;
+  setComponentMap: (componentMap: Map<string, AppMaterielCanvasItem>) => void;
+  addComponent: (component: AppMaterielCanvasItem) => void;
   removeComponentById: (id: string) => void;
   setSelectedId: (id?: string) => void;
   clearAll: () => void;
@@ -24,7 +23,7 @@ export interface CanvasComponentActions {
     id: string,
     next: { top?: number; left?: number; width?: number; height?: number },
   ) => void;
-  updateComponentById: (id: string, next: Partial<MaterielCanvasItem>) => void;
+  updateComponentById: (id: string, next: Partial<AppMaterielCanvasItem>) => void;
   bringToFront: (id: string) => void;
   reorderByIds: (descIds: string[]) => void;
   setLockById: (id: string, isLocked: boolean) => void;
@@ -42,7 +41,7 @@ export interface CanvasComponentActions {
 }
 
 export const useCanvasStore = create<CanvasComponentState & CanvasComponentActions>()((set) => ({
-  componentMap: new Map<string, MaterielCanvasItem>(),
+  componentMap: new Map<string, AppMaterielCanvasItem>(),
   selectedId: undefined,
   clipboard: undefined,
   setComponentMap: (componentMap) =>
@@ -55,7 +54,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
     set((state) => {
       const nextMap = new Map(state.componentMap);
       const highest = getHighestZIndex(nextMap);
-      const withLayer: MaterielCanvasItem = {
+      const withLayer: AppMaterielCanvasItem = {
         ...component,
         isLocked: component.isLocked ?? false,
         isVisible: component.isVisible ?? true,
@@ -88,7 +87,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
   clearAll: () =>
     set((state) => {
       if (state.componentMap.size === 0) return {};
-      const nextMap = new Map<string, MaterielCanvasItem>();
+      const nextMap = new Map<string, AppMaterielCanvasItem>();
       useHistoryStore.getState().commit(nextMap, { action: 'delete', label: '清空画布' });
       return { componentMap: nextMap, selectedId: undefined };
     }),
@@ -112,7 +111,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
         width: current.width,
         height: current.height,
       };
-      nextMap.set(id, { ...current, ...computed } as MaterielCanvasItem);
+      nextMap.set(id, { ...current, ...computed } as AppMaterielCanvasItem);
 
       // 仅当有变更时记录
       const changed =
@@ -143,7 +142,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
       const current = state.componentMap.get(id);
       if (!current) return {};
       const nextMap = new Map(state.componentMap);
-      nextMap.set(id, { ...current, ...next } as MaterielCanvasItem);
+      nextMap.set(id, { ...current, ...next } as AppMaterielCanvasItem);
       useHistoryStore.getState().commit(nextMap, {
         action: 'update',
         label: `更新 - ${current.title ?? current.type ?? '组件'}`,
@@ -234,7 +233,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
       const current = state.componentMap.get(id);
       if (!current) return {};
       // 深拷贝 option，其余为浅拷贝即可
-      const copied: MaterielCanvasItem = {
+      const copied: AppMaterielCanvasItem = {
         ...current,
         option: cloneDeep(current.option ?? {}),
       };
@@ -244,7 +243,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
     set((state) => {
       const current = state.componentMap.get(id);
       if (!current) return {};
-      const copied: MaterielCanvasItem = {
+      const copied: AppMaterielCanvasItem = {
         ...current,
         option: cloneDeep(current.option ?? {}),
       };
@@ -262,7 +261,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
       const highest = getHighestZIndex(nextMap);
       const offset = 10;
       const id = generateId('comp_');
-      const nextComponent: MaterielCanvasItem = {
+      const nextComponent: AppMaterielCanvasItem = {
         ...clip,
         id,
         left: (clip.left ?? 0) + offset,
@@ -287,7 +286,7 @@ export const useCanvasStore = create<CanvasComponentState & CanvasComponentActio
       const nextMap = new Map(state.componentMap);
       const highest = getHighestZIndex(nextMap);
       const id = generateId('comp_');
-      const nextComponent: MaterielCanvasItem = {
+      const nextComponent: AppMaterielCanvasItem = {
         ...clip,
         id,
         left: Math.round(left),

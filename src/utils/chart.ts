@@ -1,5 +1,5 @@
 import { globalThemeJson } from '@/components/ECharts/chartThemes';
-import type { OptionKey } from '@/types/materielType';
+
 import type { EChartsOption } from 'echarts-for-react';
 import { merge } from 'lodash-es';
 
@@ -34,7 +34,7 @@ export const readShowFlag = (value: unknown): boolean => {
 // 更新指定 key 的 show 标记：数组仅更新首项，其余保持不变
 export const updateOptionShowFlag = (
   prev: EChartsOption,
-  key: OptionKey,
+  key: AppOptionKey,
   checked: boolean,
 ): EChartsOption => {
   const current = (prev as Record<string, unknown>)[key];

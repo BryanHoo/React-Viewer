@@ -1,12 +1,12 @@
 import { memo, useMemo } from 'react';
-import type { MaterielCanvasItem } from '@/types/materielType';
+
 import { useSortable } from '@dnd-kit/sortable';
 import { Lock, PreviewCloseOne, PreviewOpen, Unlock } from '@icon-park/react';
 import { useMemoizedFn } from 'ahooks';
 import classNames from '@/utils/classname';
 
 interface SortableItemProps {
-  item: MaterielCanvasItem;
+  item: AppMaterielCanvasItem;
   isActive: boolean;
   onSelect: (id: string) => void;
   onToggleLock: (id: string, next: boolean) => void;

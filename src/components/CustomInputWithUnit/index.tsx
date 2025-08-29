@@ -2,13 +2,13 @@ import { memo, type FC, useMemo } from 'react';
 import { InputNumber, Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import type { CSSProperties } from 'react';
-import { inferUnitFromValue, type CssUnit } from '@/utils';
+import { inferUnitFromValue } from '@/utils';
 
 interface CustomInputWithUnitProps {
   value?: string;
   onChange?: (next?: string) => void;
-  units?: CssUnit[];
-  defaultUnit?: CssUnit;
+  units?: AppCssUnit[];
+  defaultUnit?: AppCssUnit;
 
   // passthrough for InputNumber
   min?: number;
@@ -61,7 +61,7 @@ const CustomInputWithUnit: FC<CustomInputWithUnitProps> = memo((props) => {
     onChange(`${next}${unitValue}`);
   };
 
-  const handleUnitChange = (nextUnit: CssUnit) => {
+  const handleUnitChange = (nextUnit: AppCssUnit) => {
     if (!onChange) return;
     if (typeof numberValue !== 'number') {
       onChange(undefined);
@@ -89,7 +89,7 @@ const CustomInputWithUnit: FC<CustomInputWithUnitProps> = memo((props) => {
           className={selectClassName}
           style={{ width: 50, ...(selectStyle ?? {}) }}
           value={unitValue}
-          onChange={(val) => handleUnitChange(val as CssUnit)}
+          onChange={(val) => handleUnitChange(val as AppCssUnit)}
           options={units.map((u) => ({ label: u, value: u }))}
         />
       }

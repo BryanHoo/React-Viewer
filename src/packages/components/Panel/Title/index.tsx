@@ -7,7 +7,6 @@ import { useShallow } from 'zustand/shallow';
 import { useGlobalStore } from '@/store/globalStore';
 import { useMemoizedFn } from 'ahooks';
 import FormRow from '@/components/FormRow';
-import type { PanelProps } from '@/types/materielType';
 
 interface PanelFormValues {
   title?: string;
@@ -17,7 +16,7 @@ interface PanelFormValues {
   left?: number;
 }
 
-const Title: FC<PanelProps> = memo((props) => {
+const Title: FC<AppPanelProps> = memo((props) => {
   const { config: selectedItem } = props;
   const [form] = Form.useForm<PanelFormValues>();
   const { updateComponentRectById, updateComponentById } = useCanvasStore(

@@ -1,8 +1,7 @@
-import type { TypeItemConfig } from '@/types/materielType';
 import Bar from './items/Bar';
 import Line from './items/Line';
 
-export const typeItemConfig: Record<string, TypeItemConfig> = {
+export const typeItemConfig: Record<string, AppTypeItemConfig> = {
   bar: {
     label: '柱状图',
     value: 'bar',

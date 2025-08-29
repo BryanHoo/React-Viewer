@@ -1,7 +1,7 @@
 import CustomSegmented from '@/components/CustomSegmented';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useGlobalStore } from '@/store/globalStore';
-import type { PanelProps } from '@/types/materielType';
+
 import { useMemoizedFn } from 'ahooks';
 import { Form } from 'antd';
 import { memo, useEffect, type FC } from 'react';
@@ -12,7 +12,7 @@ interface RenderForm {
   componentRenderType: 'svg' | 'canvas' | 'inherit';
 }
 
-const Render: FC<PanelProps> = memo((props) => {
+const Render: FC<AppPanelProps> = memo((props) => {
   const { config, id } = props;
   const [form] = Form.useForm<RenderForm>();
   const { echartsRenderer, setEchartsRenderer } = useGlobalStore(

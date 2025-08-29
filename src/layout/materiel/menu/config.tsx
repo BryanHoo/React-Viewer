@@ -6,10 +6,10 @@ import {
   TableFile,
   Ungroup,
 } from '@icon-park/react';
-import type { MenuConfig } from '@/types/menuType';
+
 import { echartsItems } from '@/packages';
 
-export const menuConfig: MenuConfig = {
+export const menuConfig: AppMenuConfig = {
   echarts: {
     title: '图表',
     icon: <ChartHistogramTwo theme="outline" size="18" />,

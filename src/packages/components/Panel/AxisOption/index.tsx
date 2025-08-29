@@ -6,11 +6,11 @@ import FormRow from '@/components/FormRow';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useShallow } from 'zustand/shallow';
 import { merge } from 'lodash-es';
-import type { MaterielCanvasItem } from '@/types/materielType';
+
 import CustomColorPicker from '@/components/CustomColorPicker';
 
 interface AxisOptionProps {
-  config?: MaterielCanvasItem;
+  config?: AppMaterielCanvasItem;
   id: string;
   axis: 'x' | 'y';
 }

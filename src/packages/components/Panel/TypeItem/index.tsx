@@ -1,8 +1,7 @@
 import { Select, type CollapseProps } from 'antd';
 import { typeItemConfig } from './config';
-import type { PanelProps } from '@/types/materielType';
 
-interface TypeItemProps extends PanelProps {
+interface TypeItemProps extends AppPanelProps {
   itemKey: string;
   type: keyof typeof typeItemConfig;
   label?: string;

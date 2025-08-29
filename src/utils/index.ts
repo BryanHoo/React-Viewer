@@ -1,6 +1,5 @@
+import { cloneDeep } from 'lodash-es';
 import { nanoid } from 'nanoid';
-
-export type CssUnit = 'px' | '%';
 
 /**
  * 生成带有可选前缀的随机唯一 ID
@@ -12,7 +11,7 @@ export function generateId(prefix: string = '', size: number = 21): string {
   return prefix + nanoid(size);
 }
 
-export const toCss = (value?: number, unit: CssUnit = 'px') => {
+export const toCss = (value?: number, unit: AppCssUnit = 'px') => {
   return typeof value === 'number' && !Number.isNaN(value) ? `${value}${unit}` : undefined;
 };
 
@@ -24,7 +23,7 @@ export const normalize = (val?: number | null) => {
 /**
  * 从值中推断单位（包含 % 视为百分比，否则为 px）
  */
-export const inferUnitFromValue = (value?: unknown): CssUnit => {
+export const inferUnitFromValue = (value?: unknown): AppCssUnit => {
   return typeof value === 'string' && value.trim().includes('%') ? '%' : 'px';
 };
 
@@ -33,11 +32,36 @@ export const inferUnitFromValue = (value?: unknown): CssUnit => {
  */
 export const toEchartsLength = (
   value?: number,
-  unit: CssUnit = 'px',
+  unit: AppCssUnit = 'px',
 ): number | string | undefined => {
   if (typeof value !== 'number' || Number.isNaN(value)) return undefined;
   return unit === 'px' ? Math.round(value) : `${value}%`;
 };
+
+export function cloneComponentMap(
+  source: Map<string, AppMaterielCanvasItem>,
+): Map<string, AppMaterielCanvasItem> {
+  const next = new Map<string, AppMaterielCanvasItem>();
+  source.forEach((value, key) => {
+    next.set(key, {
+      ...value,
+      option: cloneDeep(value.option),
+    });
+  });
+  return next;
+}
+
+export function createSnapshot(
+  map: Map<string, AppMaterielCanvasItem>,
+  meta: AppHistorySnapshotMeta,
+): AppHistorySnapshot {
+  return {
+    id: generateId('history-'),
+    timestamp: Date.now(),
+    componentSnapshotMap: cloneComponentMap(map),
+    ...meta,
+  };
+}
 
 export type { Rect, RectPartial, CanvasBounds, MinSizeConstraints } from './rect';
 export { computeNextRectWithinCanvas, DEFAULT_MIN_SIZE, clampRectToCanvas } from './rect';

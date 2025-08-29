@@ -1,4 +1,4 @@
-import BaseECharts from '../../Base';
+import EChartsRenderer from '../../CommonRenderer';
 import { memo, type FC } from 'react';
 
 interface BaseLineOneProps {
@@ -7,7 +7,7 @@ interface BaseLineOneProps {
 
 const BaseLineOne: FC<BaseLineOneProps> = memo((props) => {
   const { id } = props;
-  return <BaseECharts id={id} />;
+  return <EChartsRenderer id={id} />;
 });
 
 BaseLineOne.displayName = 'BaseLineOne';

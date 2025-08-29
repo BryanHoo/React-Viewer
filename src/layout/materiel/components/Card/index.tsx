@@ -1,9 +1,8 @@
 import { useGlobalStore } from '@/store/globalStore';
 import { memo, type FC } from 'react';
 import { useShallow } from 'zustand/shallow';
-import type { MaterielItem } from '@/types/materielType';
 
-const Card: FC<MaterielItem> = memo((props) => {
+const Card: FC<AppMaterielItem> = memo((props) => {
   const { title, image } = props;
   const { isDragging, setIsDragging } = useGlobalStore(
     useShallow((state) => ({
