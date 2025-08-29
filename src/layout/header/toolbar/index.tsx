@@ -38,8 +38,9 @@ const Toolbar = memo(() => {
   const { historyIndex, histories } = useHistoryStore(
     useShallow((state) => ({ historyIndex: state.historyIndex, histories: state.histories })),
   );
-  const canUndo = historyIndex > 0;
-  const canRedo = historyIndex < histories.length - 1;
+  // 最新在上：后退=撤回到更旧 -> index < len-1；前进=恢复到更新 -> index > 0
+  const canUndo = historyIndex < histories.length - 1;
+  const canRedo = historyIndex > 0;
   return (
     <div className="flex items-center gap-[12px]">
       <Tooltip title="首页" placement="bottom">

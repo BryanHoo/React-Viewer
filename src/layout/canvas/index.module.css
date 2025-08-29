@@ -49,3 +49,7 @@
   border-color: var(--moveable-color) !important;
   background: #ffffff !important;
 }
+
+.moveableTheme :global(.rv-comp-guideline) {
+  color: var(--n-primary-color);
+}

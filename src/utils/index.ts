@@ -41,3 +41,10 @@ export const toEchartsLength = (
 
 export type { Rect, RectPartial, CanvasBounds, MinSizeConstraints } from './rect';
 export { computeNextRectWithinCanvas, DEFAULT_MIN_SIZE, clampRectToCanvas } from './rect';
+export {
+  getIdsOrderedByZIndexDesc,
+  buildOrderAfterSendToBack,
+  buildOrderAfterMoveUp,
+  buildOrderAfterMoveDown,
+  getHighestZIndex,
+} from './zIndex';

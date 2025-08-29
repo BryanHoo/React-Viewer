@@ -1,10 +1,12 @@
-import { memo, type FC } from 'react';
+import { memo, type FC, useState } from 'react';
 import classNames from '@/utils/classname';
 import type { MaterielCanvasItem } from '@/types/materielType';
 import { useCanvasStore } from '@/store/canvasStore';
 import packages from '@/packages';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn } from 'ahooks';
+import { Popover } from 'antd';
+import ContextMenu from './ContextMenu';
 
 interface ChartWrapProps extends MaterielCanvasItem {
   className?: string;
@@ -30,7 +32,14 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
     isVisible,
   } = rest;
   const Component = packages.components[componentName];
-  const setSelectedId = useCanvasStore(useShallow((state) => state.setSelectedId));
+  const { setSelectedId, selectedId } = useCanvasStore(
+    useShallow((state) => ({
+      setSelectedId: state.setSelectedId,
+      selectedId: state.selectedId,
+    })),
+  );
+
+  const [isContextOpen, setIsContextOpen] = useState<boolean>(false);
 
   const handleSelect = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -38,31 +47,54 @@ const ChartWrap: FC<ChartWrapProps> = memo((props) => {
     setSelectedId(id);
   });
 
+  const openContextMenu = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isLocked && selectedId !== id) {
+      setSelectedId(id);
+    }
+    setIsContextOpen(true);
+  });
+
+  const handleCloseContextMenu = useMemoizedFn(() => {
+    setIsContextOpen(false);
+  });
+
   return (
-    <div
-      className={classNames('absolute', className)}
-      style={{
-        top,
-        left,
-        width,
-        height,
-        paddingTop,
-        paddingRight,
-        paddingBottom,
-        paddingLeft,
-        boxSizing: 'border-box',
-        zIndex,
-        display: isVisible === false ? 'none' : undefined,
-        pointerEvents: isLocked ? 'none' : undefined,
-        ...style,
-      }}
-      data-id={id}
-      data-title={title}
-      key={id}
-      onMouseDown={handleSelect}
+    <Popover
+      open={isContextOpen}
+      onOpenChange={(open) => setIsContextOpen(open)}
+      trigger={['contextMenu']}
+      placement="rightTop"
+      content={<ContextMenu onClose={handleCloseContextMenu} />}
     >
-      <Component id={id} config={rest} />
-    </div>
+      <div
+        className={classNames('absolute', `rv-comp-${id}`, className)}
+        style={{
+          top,
+          left,
+          width,
+          height,
+          minWidth: 80,
+          minHeight: 60,
+          paddingTop,
+          paddingRight,
+          paddingBottom,
+          paddingLeft,
+          boxSizing: 'border-box',
+          zIndex,
+          display: isVisible ? undefined : 'none',
+          ...style,
+        }}
+        data-id={id}
+        data-title={title}
+        key={id}
+        onMouseDown={handleSelect}
+        onContextMenu={openContextMenu}
+      >
+        <Component id={id} config={rest} />
+      </div>
+    </Popover>
   );
 });
 

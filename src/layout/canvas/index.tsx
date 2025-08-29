@@ -14,12 +14,13 @@ import Moveable from 'react-moveable';
 import useMoveableHandlers from './hooks/useMoveableHandlers';
 import type { MaterielItem } from '@/types/materielType';
 import { clampRectToCanvas, isMaterielItem } from '@/utils/rect';
-import type { Rect, CanvasBounds } from '@/utils/rect';
+import type { Rect } from '@/utils/rect';
 import useComponent from '@/hooks/useComponent';
 import { cloneDeep } from 'lodash-es';
 import useWheelZoomOrScroll from './hooks/useWheelZoomOrScroll';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { defaultEvent } from '../setting/selectedPanel/event/config';
+import CanvasContextMenu from './components/CanvasContextMenu';
 
 const Canvas: React.FC = memo(() => {
   const {
@@ -64,6 +65,8 @@ const Canvas: React.FC = memo(() => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const size = useSize(containerRef);
+
+  // 使用选择器，无需元素注册表
 
   const computedBackgroundSize = useMemo(() => {
     return backgroundFit === 'cover'
@@ -114,14 +117,15 @@ const Canvas: React.FC = memo(() => {
       const realY = y / zoom - defaultHeight / 2;
 
       // 裁剪到画布范围内并四舍五入
-      const clamped: Rect = (
-        clampRectToCanvas as unknown as (rect: Rect, canvas: CanvasBounds) => Rect
-      )({ left: realX, top: realY, width: defaultWidth, height: defaultHeight }, { width, height });
+      const clamped: Rect = clampRectToCanvas(
+        { left: realX, top: realY, width: defaultWidth, height: defaultHeight },
+        { width, height },
+      );
 
       const raw = e.dataTransfer.getData('materielConfig');
       let materielConfig: MaterielItem;
       try {
-        const parsed = JSON.parse(raw) as unknown;
+        const parsed = JSON.parse(raw);
         if (!isMaterielItem(parsed)) return;
         materielConfig = parsed;
       } catch {
@@ -136,11 +140,10 @@ const Canvas: React.FC = memo(() => {
         left: clamped.left,
         width: clamped.width,
         height: clamped.height,
+        isVisible: true,
         event: defaultEvent,
       });
-      setTimeout(() => {
-        setSelectedId(newId);
-      }, 0);
+      setSelectedId(newId);
     }
   });
 
@@ -154,16 +157,23 @@ const Canvas: React.FC = memo(() => {
     handleScaleChange();
   }, [handleScaleChange, size?.width, width]);
 
-  const { targetElement, elementGuidelines, onDrag, onDragEnd, onResize, onResizeEnd } =
-    useMoveableHandlers({
-      canvasRef,
-      selectedId,
-      selectedItem,
-      canvasWidth: width,
-      canvasHeight: height,
-      unit,
-      updateComponentRectById,
-    });
+  const { onDrag, onDragEnd, onResize, onResizeEnd } = useMoveableHandlers({
+    selectedId,
+    updateComponentRectById,
+  });
+
+  // 以类选择器作为 target
+  const targetSelector = useMemo(() => {
+    if (!selectedId || !selectedItem?.isVisible) return null;
+    return `.rv-comp-${selectedId}`;
+  }, [selectedId, selectedItem?.isVisible]);
+
+  // 以类选择器数组作为 elementGuidelines
+  const elementGuidelines = useMemo(() => {
+    return componentList
+      .filter((c) => c.id !== selectedId && c.isVisible)
+      .map((c) => ({ element: `.rv-comp-${c.id}`, className: 'rv-comp-guideline' }));
+  }, [componentList, selectedId]);
 
   // 当选中组件的矩形（top/left/width/height）由外部表单或其它逻辑更新时，
   // 主动通知 Moveable 重新计算选择框位置
@@ -177,12 +187,48 @@ const Canvas: React.FC = memo(() => {
     selectedItem?.height,
   ]);
 
-  // 取消选中：点击画布空白区域
+  // 选择器目标发生变化时，通知 Moveable 重新解析选择器
+  useEffect(() => {
+    moveableRef.current?.updateSelectors?.();
+  }, [targetSelector, elementGuidelines]);
+
+  // 取消选中：点击画布空白区域（仅左键）
   const handleCanvasMouseDown = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
+    // 仅在左键点击时取消选中，避免右键菜单交互被打断
+    if (e.button !== 0) return;
     const target = e.target as HTMLElement;
     // 点击 Moveable 控件不取消选中
     if (target.closest('.moveable') || target.closest('.moveable-control')) return;
     setSelectedId(undefined);
+  });
+
+  // 画布级右键菜单
+  const [isCanvasMenuOpen, setIsCanvasMenuOpen] = useState<boolean>(false);
+  const [canvasMenuPosition, setCanvasMenuPosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [pastePosition, setPastePosition] = useState<{ left: number; top: number }>({
+    left: 0,
+    top: 0,
+  });
+
+  const handleCanvasContextMenu = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsCanvasMenuOpen(true);
+    setCanvasMenuPosition({ x: e.clientX, y: e.clientY });
+    if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      const left = cx / zoom;
+      const top = cy / zoom;
+      setPastePosition({ left: Math.round(left), top: Math.round(top) });
+    }
+  });
+
+  const handleCloseCanvasMenu = useMemoizedFn(() => {
+    setIsCanvasMenuOpen(false);
   });
 
   return (
@@ -251,23 +297,27 @@ const Canvas: React.FC = memo(() => {
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onMouseDown={handleCanvasMouseDown}
+          onContextMenu={handleCanvasContextMenu}
         >
           {componentList.map((item) => (
             <ChartWrap {...item} key={item.id} />
           ))}
 
-          {targetElement ? (
+          {targetSelector ? (
             <Moveable
               ref={moveableRef}
-              target={targetElement}
+              target={targetSelector}
               className={styles.moveableTheme}
               container={canvasRef.current}
+              snapContainer={canvasRef.current}
               origin={false}
               edge={false}
               draggable={selectedItem?.isLocked ? false : true}
               resizable={selectedItem?.isLocked ? false : true}
               rotatable={false}
               keepRatio={false}
+              zoom={zoom}
+              bounds={{ left: 0, top: 0, right: width, bottom: height }}
               renderDirections={['nw', 'ne', 'sw', 'se', 'n', 'w', 's', 'e']}
               snappable
               snapGridWidth={unit}
@@ -282,6 +332,12 @@ const Canvas: React.FC = memo(() => {
           ) : null}
         </div>
       </InfiniteViewer>
+      <CanvasContextMenu
+        isOpen={isCanvasMenuOpen}
+        position={canvasMenuPosition}
+        pastePosition={pastePosition}
+        onRequestClose={handleCloseCanvasMenu}
+      />
       <Footer handleScaleChange={handleScaleChange} />
     </div>
   );

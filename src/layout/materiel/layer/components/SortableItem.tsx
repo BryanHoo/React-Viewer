@@ -42,7 +42,7 @@ const SortableItem = memo((props: SortableItemProps) => {
   }, [isActive]);
 
   // 3. 简化 isVisible 判断逻辑，提取常量
-  const isVisible = item.isVisible !== false;
+  const isVisible = item.isVisible;
   const isLocked = item.isLocked === true;
 
   // 4. 使用 useMemoizedFn 优化事件处理函数

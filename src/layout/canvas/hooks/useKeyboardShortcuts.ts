@@ -71,6 +71,7 @@ export default function useKeyboardShortcuts(): void {
       width: computed.width,
       height: computed.height,
       option: cloneDeep(template.option),
+      isVisible: true,
     } as MaterielCanvasItem;
 
     addComponent(nextItem);
