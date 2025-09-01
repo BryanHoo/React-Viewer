@@ -36,6 +36,7 @@ const ECharts = memo(
       onEvents,
       renderer = 'svg',
     } = props;
+    console.log('🚀 ~ option:', option);
 
     const mergedOption = useMemo(() => mergeWithGlobalTheme(option), [option]);
 

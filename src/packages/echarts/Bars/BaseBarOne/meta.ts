@@ -3,7 +3,7 @@ import { defaultOption } from './config';
 
 export default {
   id: 'BaseBarOne',
-  title: '基础柱状图',
+  title: '基础柱状图1',
   image,
   type: '柱状图',
   componentName: 'CommonRenderer',

@@ -1,9 +1,9 @@
-import image from '@/assets/images/chart/charts/bar_x.png';
+import image from '@/assets/images/chart/charts/bar_y.png';
 import { defaultOption } from './config';
 
 export default {
-  id: 'BaseBarTwo',
-  title: '双轴柱状图',
+  id: 'BarCrossrange',
+  title: '横向双轴柱状图',
   image,
   type: '柱状图',
   componentName: 'CommonRenderer',

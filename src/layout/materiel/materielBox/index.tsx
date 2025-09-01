@@ -13,7 +13,7 @@ const MaterielBox = memo(() => {
   const [activeCategory, setActiveCategory] = useState('all');
   return (
     <div
-      className={`h-full flex-shrink-0 flex flex-row overflow-hidden transition-all duration-500 ${showChart ? 'w-[265px] opacity-100' : 'w-0 opacity-0'}`}
+      className={`h-full flex-shrink-0 flex flex-row overflow-hidden min-h-0 transition-all duration-500 ${showChart ? 'w-[265px] opacity-100' : 'w-0 opacity-0'}`}
     >
       <Category activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
       <MaterielItems activeCategory={activeCategory} />

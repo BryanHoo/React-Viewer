@@ -1,10 +1,10 @@
-import image from '@/assets/images/chart/charts/bar_x.png';
+import image from '@/assets/images/chart/charts/bar/BaseBarSix-view.png';
 import { defaultOption } from './config';
 
 export default {
-  id: 'BaseBarTwo',
-  title: '双轴柱状图',
-  image,
+  id: 'BaseBarSix',
+  title: '基础柱状图2',
+  image: image,
   type: '柱状图',
   componentName: 'CommonRenderer',
   panel: 'CommonPanel',

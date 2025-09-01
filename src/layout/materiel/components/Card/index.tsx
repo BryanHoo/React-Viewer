@@ -21,7 +21,7 @@ const Card: FC<AppMaterielItem> = memo((props) => {
   };
 
   return (
-    <div className="bg-[#232324] rounded-[6px] cursor-pointer border border-[#000] overflow-hidden">
+    <div className="bg-[#232324] rounded-[6px] cursor-pointer border border-[#000] overflow-hidden h-[140px] shrink-0">
       <div className="w-full bg-[#2a2a2b] px-[15px] py-[2px] flex flex-row items-center justify-between">
         <div className="flex">
           <div className="pointer-events-none w-[8px] h-[8px] rounded-full mx-[2px] bg-[#fc625d]"></div>

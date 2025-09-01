@@ -7,6 +7,7 @@ import classNames from '@/utils/classname';
 
 const CommonRenderer: FC<AppBaseEChartsProps> = memo((props) => {
   const { config } = props;
+  console.log('🚀 ~ config:', config);
   const { echartsRenderer, themeColor } = useGlobalStore(
     useShallow((state) => ({
       echartsRenderer: state.echartsRenderer,

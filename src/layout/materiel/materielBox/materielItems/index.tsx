@@ -24,11 +24,11 @@ const MaterielItems: FC<MaterielItemsProps> = memo(({ activeCategory }) => {
     return menuConfig[activeMenu].items.filter((item) => item.type === activeCategory);
   }, [activeMenu, activeCategory]);
   return (
-    <div className="h-full flex-1 flex flex-col overflow-y-auto">
+    <div className="flex-1 w-0 h-full flex flex-col overflow-hidden min-h-0">
       <div className="h-[40px] flex items-center justify-center p-[10px] text-sm text-[var(--n-text-color)]">
         <Input placeholder="搜索" allowClear addonAfter={<SearchOutlined />} />
       </div>
-      <div className="flex-1 flex flex-col overflow-y-auto px-[10px] gap-[6px]">
+      <div className="flex-1 flex flex-col overflow-y-auto px-[10px] gap-[6px] h-0 min-h-0">
         {list.map((item) => (
           <Card key={item.id} {...item} />
         ))}
