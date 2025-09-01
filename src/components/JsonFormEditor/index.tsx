@@ -15,7 +15,7 @@ const JsonFormEditor: FC<JsonFormEditorProps> = memo((props) => {
   const { value, onChange, className, style, rootFontSize = 14, ...rest } = props;
 
   return (
-    <div className={classNames(className, 'w-full h-[500px] overflow-y-auto')} style={style}>
+    <div className={classNames('w-full h-[500px] overflow-y-auto', className)} style={style}>
       <JsonEditor
         data={value as any}
         setData={onChange}

@@ -23,10 +23,6 @@ const restrictDelete = ({ key, path, parentData }: any) => {
   return false;
 };
 
-const defaultValue = ({ key }: any) => {
-  return key === 'source' ? {} : null;
-};
-
 const SelectedPanelData: FC<AppPanelProps> = memo((props) => {
   const { config, id } = props;
   const [form] = Form.useForm();
@@ -80,7 +76,6 @@ const SelectedPanelData: FC<AppPanelProps> = memo((props) => {
           restrictDelete={restrictDelete}
           restrictDrag={restrict}
           enableClipboard={false}
-          defaultValue={defaultValue}
         />
       </Form.Item>
     </Form>

@@ -31,7 +31,8 @@ export const eventConfig = [
 
 export const defaultEvent = eventConfig.reduce(
   (acc, item) => {
-    acc[item.value] = `async ${item.value} (mouseEvent,components) {\n\n\n\n\n\n\n\n}`;
+    acc[item.value] =
+      `async function ${item.value} (mouseEvent, components){\n// 在此处编写事件处理逻辑\n}`;
     return acc;
   },
   {} as Record<string, string>,

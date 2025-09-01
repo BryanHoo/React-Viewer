@@ -1,11 +1,12 @@
 import classNames from '@/utils/classname';
 import { Button, ConfigProvider, Select, Slider } from 'antd';
-import { memo, type FC } from 'react';
+import { memo, type FC, useState } from 'react';
 import { Lock, Unlock } from '@icon-park/react';
 import { useGlobalStore } from '@/store/globalStore';
 import { useShallow } from 'zustand/shallow';
 import { useMemoizedFn } from 'ahooks';
 import HistoryPopover from './components/HistoryPopover';
+import CodeModal from './components/CodeModal';
 
 interface FooterProps {
   handleScaleChange: () => void;
@@ -20,6 +21,16 @@ const Footer: FC<FooterProps> = memo(({ handleScaleChange: handleScaleChangeProp
       setScaleLock: state.setScaleLock,
     })),
   );
+
+  const [codeModalOpen, setCodeModalOpen] = useState(false);
+
+  const handleCodeModalOpen = useMemoizedFn(() => {
+    setCodeModalOpen(true);
+  });
+
+  const handleCodeModalClose = useMemoizedFn(() => {
+    setCodeModalOpen(false);
+  });
 
   const handleScaleChange = useMemoizedFn((value: number | string) => {
     if (scaleLock) return;
@@ -43,13 +54,18 @@ const Footer: FC<FooterProps> = memo(({ handleScaleChange: handleScaleChangeProp
         'flex items-center justify-between flex-nowrap px-[10px]',
       )}
     >
-      <HistoryPopover placement="top" />
+      <div className="flex items-center flex-nowrap gap-[8px]">
+        <HistoryPopover placement="top" />
+        <Button type="text" onClick={handleCodeModalOpen}>
+          源代码
+        </Button>
+      </div>
       <div className="flex items-center justify-between flex-nowrap gap-[10px] pr-[10px]">
         <Button
           icon={scaleLock ? <Lock theme="outline" /> : <Unlock theme="outline" />}
           type="text"
           onClick={handleScaleLock}
-        ></Button>
+        />
         <ConfigProvider
           theme={{
             components: {
@@ -84,6 +100,8 @@ const Footer: FC<FooterProps> = memo(({ handleScaleChange: handleScaleChangeProp
           ]}
         />
       </div>
+
+      <CodeModal open={codeModalOpen} onCancel={handleCodeModalClose} />
     </div>
   );
 });
